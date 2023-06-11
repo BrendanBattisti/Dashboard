@@ -1,0 +1,17 @@
+.clock {
+  position: absolute;
+  height: 15vh;
+  width: 30vh;
+  border: 2px solid rgba(0, 238, 255, 0.5);
+  border-bottom-right-radius: 2vh;
+  border-top-left-radius: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clock_text {
+  text-align: center;
+  color: rgba(0, 238, 255, 0.8);
+  font-size: xx-large;
+}
