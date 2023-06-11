@@ -73,11 +73,12 @@ def format_weather_data(raw_weather_data):
         new_weather_data[day_index]['chunks'].append(new_chunk)
 
     # Aggregating the three hour chunks
-    for day in new_weather_data:
+    for index, day in enumerate(new_weather_data):
         dt = datetime.datetime.fromtimestamp(day['chunks'][0]['dt'])
         day['weekday'] = dt.weekday()
         day['day'] = dt.day
         day['month'] = dt.month
+        day['index'] = index
         day['high'] = max([x['temp'] for x in day['chunks']])
         day['low'] = min([x['temp'] for x in day['chunks']])
         weather_types = [x['weather'] for x in day['chunks']]
