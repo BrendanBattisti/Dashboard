@@ -2,7 +2,8 @@
   position: absolute;
   top: 5%;
   right: 5%;
-  width: 25vh;
+  width: 40vh;
+  min-width:fit-content;
   height: 100%;
   text-align: center;
 }
@@ -30,8 +31,19 @@
 .temp {
   text-align: center;
 }
+
 .stream {
   display: flex;
   align-content: space-evenly;
   flex-direction: column;
+}
+
+.hourly {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly
+}
+
+.hour {
+  width: min-content;
 }
