@@ -103,17 +103,22 @@ def update_device_state(name: str, new_state: bool):
             break
 
     if not selected:
-        return
+        format_for_sending({'devices': devices})
 
     if selected['on'] == new_state:
-        return
+        format_for_sending({'devices': devices})
 
     # Actually change the state of the device
     real_device = SmartPlug(selected['ip'])
-    asyncio.run(kasa_new_state(real_device, new_state))
+    try:
+        asyncio.run(kasa_new_state(real_device, new_state))
 
+    except kasa.SmartDeviceException:
+        return format_for_sending({'devices': devices})
     #  Change the state of the stored device
     selected['on'] = new_state
     devices[selected_index] = selected
     save_lights(json_storage_format(devices))
+
+    return format_for_sending({'devices': devices})
 
