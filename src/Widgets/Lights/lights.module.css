@@ -1,4 +1,10 @@
 .lights {
-    position: absolute;
-    bottom: 0;
+  position: absolute;
+  bottom: 0;
+}
+
+.lights_list {
+  display: flex;
+  flex-direction: column;
+  color: rgba(0, 238, 255, 0.5);
 }
