@@ -1,3 +1,7 @@
+"""
+Weather Module for dashboard
+"""
+
 from typing import Tuple, Any
 import json
 import datetime
