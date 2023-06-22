@@ -6,19 +6,19 @@ import { Collapse } from "@mui/material";
 export default function Weather() {
 
 
-  const [weatherData, setWeatherData] = useState([]);
+  const [data, setData] = useState([]);
   const [active, setActive] = useState(0)
 
   const weekdays = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios("weather");
-      setWeatherData(response.data)
+      setData(response.data)
     };
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 1); // Refreshes the weather
+    }, 1000 * 60 * 24); // Refreshes the weather
     fetchData();
 
   }, []);
@@ -80,7 +80,7 @@ export default function Weather() {
   // Add humidity to each weather chunk
   return (
     <div className={styles.weather}>
-      <div className={styles.stream}>{weatherData.map(Day)}</div>
+      <div className={styles.stream}>{data.map(Day)}</div>
     </div>
   );
 }

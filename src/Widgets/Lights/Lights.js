@@ -2,28 +2,15 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import styles from "./lights.module.css";
-import { Switch } from "@mui/material";
+import { Switch, TextField, Button } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
-  status: {
-    danger: "#e53e3e",
-  },
-  palette: {
-    primary: {
-      main: "#0971f1",
-      darker: "#053e85",
-    },
-    neutral: {
-      main: "#64748B",
-      contrastText: "#fff",
-    },
-  },
-});
+
 
 // Widget for monitoring and controlling the smart lights in the house
 export default function Lights() {
   const [lightsData, setLights] = useState([]);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +20,7 @@ export default function Lights() {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 1); // Refreshes the lights
+    }, 1000 * 60 * 24); // Refreshes the lights
     fetchData();
   }, []);
 
@@ -49,13 +36,30 @@ export default function Lights() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  function Control() {
+    return (
+      <div className={styles.controlBlock} >
+        <input
+          id="search"
+          label="Search"
+          key="searchbar"
+          onChange={(event) => setFilter(event.target.value)}
+        />
+        <div className={styles.buttonContainer}>
+          <Button variant="contained" className="material-symbols-outlined">
+            refresh
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   function LightSwitch(data) {
     return (
-      <div>
+      <div key={data.name}>
         <Switch
           checked={data.on}
           onClick={() => ToggleLight(data.name, data.on)}
-          label="TESTING"
         />
         {capitalizeFirstLetter(data.name)}
       </div>
@@ -63,7 +67,22 @@ export default function Lights() {
   }
 
   function LightsList(data) {
-    return <div className={styles.lights_list}>{data.map(LightSwitch)}</div>;
+    return (
+      <div className={styles.lights_list}>
+        {data
+          .filter((element) => {
+            if (filter === "") {
+              return element;
+            } else if (
+              element.name.toLowerCase().includes(filter.toLowerCase())
+            ) {
+              return element;
+            }
+          })
+          .map(LightSwitch)}
+        
+      </div>
+    );
   }
 
   return (

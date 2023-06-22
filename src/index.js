@@ -5,6 +5,10 @@ import reportWebVitals from "./reportWebVitals";
 import Title from "./Title/title";
 import Clock from "./Widgets/Clock/Clock";
 import Weather from "./Widgets/Weather/Weather";
+import Life360 from "./Widgets/Life360/Life360";
+import Lights from "./Widgets/Lights/Lights";
+import Reddit from "./Widgets/Reddit/reddit";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,8 +21,11 @@ root.render(
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
-    <Clock />
-    <Title />
+    <div className="vertical_flex">
+      <Clock />
+      <Reddit />
+      <Lights />
+    </div>
     <Weather />
   </React.StrictMode>
 );

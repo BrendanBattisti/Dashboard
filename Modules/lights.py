@@ -2,12 +2,14 @@
 Server module for controlling lights in the house
 """
 from datetime import datetime, timedelta
-from typing import Dict, Mapping
+from typing import Dict
 
 import kasa.smartdevice
-from kasa import SmartPlug, SmartDeviceException, Discover
+from kasa import SmartPlug, Discover
 import asyncio
 import json
+
+from Modules.utils import get_datetime_int, debug_msg
 
 data_file = "light_data.json"
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -28,6 +30,7 @@ def load_lights():
 
 
 def update_lights():
+    debug_msg("Updating Lights")
     discovered_devices = asyncio.run(Discover.discover(target="10.0.1.255"))
 
     devices = json_storage_format(format_lights(discovered_devices))
@@ -50,6 +53,7 @@ def format_for_sending(devices: dict) -> list:
 
 
 def refresh_lights():
+    debug_msg("Refreshing lights")
     devices = load_lights()
 
     if not devices:
@@ -59,13 +63,19 @@ def refresh_lights():
 
         time_since_update = datetime.fromtimestamp(devices['dt']) - datetime.now()
 
-        if time_since_update > timedelta(days=1): devices = update_lights()
+        if time_since_update > timedelta(days=1):
+            new_devices = update_lights()
+
+            if len(new_devices) < len(devices):
+                return devices
+
+            devices = new_devices
 
     return devices
 
 
 def json_storage_format(light_data: list) -> dict:
-    return {'dt': int(datetime.now().strftime('%Y%m%d')), 'devices': light_data}
+    return {'dt': get_datetime_int(), 'devices': light_data}
 
 
 def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
@@ -108,6 +118,8 @@ def update_device_state(name: str, new_state: bool):
     if selected['on'] == new_state:
         format_for_sending({'devices': devices})
 
+    debug_msg(f"Changing {name} to {new_state}")
+
     # Actually change the state of the device
     real_device = SmartPlug(selected['ip'])
     try:
@@ -121,4 +133,3 @@ def update_device_state(name: str, new_state: bool):
     save_lights(json_storage_format(devices))
 
     return format_for_sending({'devices': devices})
-

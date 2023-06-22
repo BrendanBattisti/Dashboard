@@ -4,3 +4,5 @@
 /package-lock.json
 /venv/
 /.idea/
+light_data.json
+threads.json

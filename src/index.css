@@ -4,3 +4,10 @@ body {
   font-family: "Anton", sans-serif;
   overflow: hidden; /* Hide scrollbars */
 }
+
+.vertical_flex {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

@@ -1,0 +1,14 @@
+.hidden {
+  display: none;
+}
+
+.container {
+  border: 2px solid rgba(0, 238, 255, 0.5);
+  border-bottom-right-radius: 2vh;
+  border-top-left-radius: 2vh;
+  padding: 1vh;
+}
+
+.subRedditImage {
+    
+}

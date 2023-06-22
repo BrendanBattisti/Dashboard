@@ -7,6 +7,7 @@ from flask import Flask, request
 
 from Modules.lights import get_lights, send_update_lights, update_device_state
 from Modules.weather import get_weather_data
+from Modules.reddit import top_threads
 
 app = Flask(__name__)
 
@@ -21,6 +22,11 @@ def life360():
     return "Penis"
 
 
+@app.route("/reddit")
+def reddit():
+    return top_threads()
+
+
 @app.route('/lights', methods=['GET', 'PUT'])
 def lights():
     if request.method == "GET":
@@ -32,7 +38,6 @@ def lights():
             return send_update_lights()
         data = json.loads(data)
         return update_device_state(data['name'], data['on'])
-
 
     return ["Nothing"]
 
