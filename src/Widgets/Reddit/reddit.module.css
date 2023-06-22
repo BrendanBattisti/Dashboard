@@ -7,8 +7,24 @@
   border-bottom-right-radius: 2vh;
   border-top-left-radius: 2vh;
   padding: 1vh;
+  width: 25%;
+  min-height: fit-content;
 }
 
 .subRedditImage {
-    
+    border-radius: 50%;
+    height: 10%;
+    width: 10%;
+}
+
+.numbers_row {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  min-width: fit-content;
 }

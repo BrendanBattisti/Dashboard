@@ -69,7 +69,7 @@ def get_top_threads(limit: int = 5):
             new_thread = Thread(title=thread.title,
                                 upvotes=thread.ups,
                                 comments=thread.num_comments,
-                                link=thread.permalink,
+                                link=f"https://www.reddit.com/{thread.permalink}",
                                 subreddit_img=subreddit.icon_img)
             threads[index] = new_thread
             index += 1
