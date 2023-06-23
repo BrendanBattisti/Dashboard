@@ -4,5 +4,6 @@
 /package-lock.json
 /venv/
 /.idea/
+/__pycache__/
 light_data.json
 threads.json
