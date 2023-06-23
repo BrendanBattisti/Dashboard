@@ -14,7 +14,7 @@ export default function Lights() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("/lights");
+      const response = await axios("api/lights");
       setLights(response.data);
     };
 
@@ -27,7 +27,7 @@ export default function Lights() {
   async function ToggleLight(name, current_state) {
     const payload = { name: name, on: !current_state };
 
-    const response = await axios.put("/lights", payload);
+    const response = await axios.put("api/lights", payload);
 
     setLights(response.data);
   }

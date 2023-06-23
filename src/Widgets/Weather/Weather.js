@@ -12,7 +12,7 @@ export default function Weather() {
   const weekdays = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("weather");
+      const response = await axios("api/weather");
       setData(response.data)
     };
 

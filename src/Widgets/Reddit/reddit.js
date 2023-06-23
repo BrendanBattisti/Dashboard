@@ -9,7 +9,7 @@ export default function Reddit() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("reddit");
+      const response = await axios("api/reddit");
       setData(response.data);
     };
 

@@ -12,22 +12,22 @@ from Modules.reddit import top_threads
 app = Flask(__name__)
 
 
-@app.route('/weather')
+@app.route('/api/weather')
 def weather():
     return get_weather_data()
 
 
-@app.route('/life360')
+@app.route('/api/life360')
 def life360():
     return "Penis"
 
 
-@app.route("/reddit")
+@app.route("/api/reddit")
 def reddit():
     return top_threads()
 
 
-@app.route('/lights', methods=['GET', 'PUT'])
+@app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():
     if request.method == "GET":
         return get_lights()
