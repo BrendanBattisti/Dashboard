@@ -2,13 +2,14 @@
 Weather Module for dashboard
 """
 
-from typing import Tuple, Any
-import json
 import datetime
+import json
+from typing import Any
+
+import requests
 
 from Modules.utils import debug_msg
-from env import WEATHER_API_KEY as API_KEY
-import requests
+from env import WEATHER_API_KEY as API_KEY, WEATHER_FILE
 
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
@@ -53,7 +54,7 @@ def save_weather_data(weather_data) -> None:
     Saves weather data in the server's storage
     """
 
-    with open("weather_data.json", 'w') as weather_data_file:
+    with open(WEATHER_FILE, 'w') as weather_data_file:
         json.dump(weather_data, weather_data_file, indent=2)
 
 

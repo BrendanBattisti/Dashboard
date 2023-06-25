@@ -10,19 +10,19 @@ import asyncio
 import json
 
 from Modules.utils import get_datetime_int, debug_msg
+from env import LIGHTS_FILE
 
-data_file = "light_data.json"
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 def save_lights(data):
-    with open(data_file, 'w') as json_file:
+    with open(LIGHTS_FILE, 'w') as json_file:
         json.dump(data, json_file, indent=2)
 
 
 def load_lights():
     try:
-        with open(data_file) as json_file:
+        with open(LIGHTS_FILE) as json_file:
             return json.load(json_file)
 
     except FileNotFoundError:

@@ -88,6 +88,7 @@ export default function Lights() {
   return (
     <div className={styles.lights}>
       <div>{LightsList(lightsData)}</div>
+      <Control />
     </div>
   );
 }

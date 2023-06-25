@@ -8,7 +8,7 @@ from typing import List
 import praw as praw
 
 from Modules.utils import get_datetime_int, debug_msg
-from env import REDDIT_USER, SUBREDDITS
+from env import REDDIT_USER, SUBREDDITS_FILE, THREADS_FILE
 
 
 @dataclass
@@ -55,10 +55,12 @@ def get_top_threads(limit: int = 5):
     debug_msg("Getting top threads")
     reddit = login_user(User(**REDDIT_USER))
 
-    index = 0
-    threads = [None] * len(SUBREDDITS) * limit
+    subreddits = get_subreddits()
 
-    for sub in SUBREDDITS:
+    index = 0
+    threads = [None] * len(subreddits) * limit
+
+    for sub in subreddits:
         subreddit = reddit.subreddit(sub)
 
         # Scrape the threads
@@ -77,8 +79,6 @@ def get_top_threads(limit: int = 5):
 
 
 def save_threads(filename: str, threads) -> None:
-    #json_obj = {"dt": get_datetime_int(), "threads": [dataclasses.asdict(x) for x in threads]}
-
     with open(filename, 'w') as json_file:
         json.dump(threads, json_file, indent=2)
 
@@ -94,9 +94,12 @@ def load_threads(filename: str):
         return {}
 
 
+def get_subreddits() -> List[str]:
+    return ['technology']
+
+
 def top_threads():
-    filename = "threads.json"
-    threads = load_threads(filename)
+    threads = load_threads(THREADS_FILE)
 
     if threads:
 
@@ -104,13 +107,12 @@ def top_threads():
         if time_since_update > datetime.timedelta(days=5):
             threads = get_top_threads()
 
-            save_threads(filename, threads)
+            save_threads(THREADS_FILE, threads)
 
     else:
         threads = get_top_threads()
-        save_threads(filename, threads)
+        save_threads(THREADS_FILE, threads)
 
     threads_list = threads['threads']
     random.shuffle(threads_list)
     return threads_list
-

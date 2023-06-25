@@ -22,6 +22,11 @@ def life360():
     return "Penis"
 
 
+@app.route('/api/shopping_list')
+def shopping_list():
+    return "CUM"
+
+
 @app.route("/api/reddit")
 def reddit():
     return top_threads()
