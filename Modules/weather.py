@@ -18,7 +18,7 @@ def get_coordinates(city, state) -> tuple[Any, Any]:
     debug_msg("Getting coordinates")
     response = requests.get(f"http://api.openweathermap.org/geo/1.0/direct?q={city}, {state}&limit={5}&appid={API_KEY}")
     data = json.loads(response.content)[0]
-    return (data['lat'], data['lon'])
+    return data['lat'], data['lon']
 
 
 def fetch_weather_data(city, state):

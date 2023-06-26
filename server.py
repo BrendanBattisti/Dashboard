@@ -6,6 +6,7 @@ import json
 from flask import Flask, request
 
 from Modules.lights import get_lights, send_update_lights, update_device_state
+from Modules.shopping import get_list, remove_from_list
 from Modules.weather import get_weather_data
 from Modules.reddit import top_threads
 
@@ -22,9 +23,18 @@ def life360():
     return "Penis"
 
 
-@app.route('/api/shopping_list')
+@app.route('/api/shopping', methods=['GET', 'PUT', 'DELETE'])
 def shopping_list():
-    return "CUM"
+    if request.method == "GET":
+
+        return get_list()
+
+    elif request.method == "PUT":
+        print(request.data)
+
+    elif request.method == "DELETE":
+        print(request.data)
+        # return remove_from_list()
 
 
 @app.route("/api/reddit")
