@@ -8,7 +8,7 @@ import Weather from "./Widgets/Weather/Weather";
 import Life360 from "./Widgets/Life360/Life360";
 import Lights from "./Widgets/Lights/Lights";
 import Reddit from "./Widgets/Reddit/reddit";
-
+import ShoppingList from "./Widgets/ShoppingList/ShoppingList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -27,6 +27,7 @@ root.render(
       <Lights />
     </div>
     <Weather />
+    
   </React.StrictMode>
 );
 

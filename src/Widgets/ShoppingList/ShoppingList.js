@@ -1,18 +1,33 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 export default function ShoppingList() {
 
-    useEffect( () => {
+  const [data, setData] = useState([]);
 
-        const fetchData = async () => {
-            const response = await axios("api/alexa");
-            setWeatherData(response.data)
-          };
-      
-          const interval = setInterval(() => {
-            fetchData();
-          }, 1000 * 60 * 24); // Refreshes the weather
-          fetchData();
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios("api/shopping");
+      setData(response.data);
+    };
 
-    }, [])
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000 * 60 * 60 * 24); // Refreshes reddit threads
+    fetchData();
+
+    
+
+  }, []);
+
+  function Item(data) {
+    return <div>data</div>
+  }
+
+
+  return <div>
+    data.map(Item)
+  </div>
 
 
 

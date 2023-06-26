@@ -4,13 +4,19 @@ SERVER
 import json
 
 from flask import Flask, request
+import subprocess
 
 from Modules.lights import get_lights, send_update_lights, update_device_state
 from Modules.shopping import get_list, remove_from_list
 from Modules.weather import get_weather_data
 from Modules.reddit import top_threads
+from env import PORT
 
 app = Flask(__name__)
+
+
+def runListServer():
+    subprocess.Popen(['node', r'.\listServer.js'])
 
 
 @app.route('/api/weather')
@@ -57,4 +63,6 @@ def lights():
     return ["Nothing"]
 
 
-app.run(port=3001)
+if __name__ == "__main__":
+    runListServer()
+    app.run(port=PORT)
