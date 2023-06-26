@@ -13,7 +13,7 @@ def get_config() -> dict:
 def get_url() -> str:
     config = get_config()
 
-    return f"https://localhost:{config['port']}/shopping"
+    return f"http://localhost:{config['port']}/shopping"
 
 
 def get_list() -> bytes:

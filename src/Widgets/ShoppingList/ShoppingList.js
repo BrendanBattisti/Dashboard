@@ -13,7 +13,7 @@ export default function ShoppingList() {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 60 * 24); // Refreshes reddit threads
+    }, 1000 * 60 * 60); // Refreshes reddit threads
     fetchData();
 
     
@@ -21,12 +21,12 @@ export default function ShoppingList() {
   }, []);
 
   function Item(data) {
-    return <div>data</div>
+    return <div>{data}</div>
   }
 
 
   return <div>
-    data.map(Item)
+    {data.map(Item)}
   </div>
 
 

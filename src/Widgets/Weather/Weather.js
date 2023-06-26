@@ -18,7 +18,7 @@ export default function Weather() {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 24); // Refreshes the weather
+    }, 1000 * 60 * 60 * 12); // Refreshes the weather
     fetchData();
 
   }, []);

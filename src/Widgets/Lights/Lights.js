@@ -20,7 +20,7 @@ export default function Lights() {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 24); // Refreshes the lights
+    }, 1000 * 60 * 60 * 24); // Refreshes the lights
     fetchData();
   }, []);
 

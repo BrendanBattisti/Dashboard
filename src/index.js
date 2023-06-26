@@ -21,13 +21,17 @@ root.render(
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
+    <div className="horizontal_flex">
     <div className="vertical_flex">
       <Clock />
       <Reddit />
       <Lights />
     </div>
-    <Weather />
-    
+    <div className="vertical_flex">
+      <Weather />
+      <ShoppingList />
+    </div>
+    </div>
   </React.StrictMode>
 );
 
