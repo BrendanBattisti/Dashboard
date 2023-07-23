@@ -1,5 +1,5 @@
 """
-Shopping module
+Life 360 module for Dashboard
 """
 import json
 import requests
@@ -13,11 +13,12 @@ def get_config() -> dict:
 def get_url() -> str:
     config = get_config()
 
-    return f"http://localhost:{config['server']['port']}/shopping"
+    return f"http://localhost:{config['server']['port']}/life360"
 
 
-def get_shopping_list() -> bytes:
+def get_family_list() -> bytes:
     response = requests.get(get_url())
+    print(response.content)
     return response.content
 
 

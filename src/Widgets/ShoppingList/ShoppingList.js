@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import styles from "./shoppingList.module.css";
 import axios from "axios";
 
 export default function ShoppingList() {
-
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -15,21 +15,11 @@ export default function ShoppingList() {
       fetchData();
     }, 1000 * 60 * 60); // Refreshes reddit threads
     fetchData();
-
-    
-
   }, []);
 
   function Item(data) {
-    return <div>{data}</div>
+    return <div>{data}</div>;
   }
 
-
-  return <div>
-    {data.map(Item)}
-  </div>
-
-
-
-
+  return <div className={styles.listContainer}>{data.map(Item)}</div>;
 }

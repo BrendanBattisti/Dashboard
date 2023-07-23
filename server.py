@@ -6,8 +6,9 @@ import json
 from flask import Flask, request
 import subprocess
 
+from Modules.life360 import get_family_list
 from Modules.lights import get_lights, send_update_lights, update_device_state
-from Modules.shopping import get_list, remove_from_list
+from Modules.shopping import get_shopping_list, remove_from_list
 from Modules.weather import get_weather_data
 from Modules.reddit import top_threads
 from env import PORT
@@ -24,16 +25,11 @@ def weather():
     return get_weather_data()
 
 
-@app.route('/api/life360')
-def life360():
-    return "Penis"
-
-
 @app.route('/api/shopping', methods=['GET', 'PUT', 'DELETE'])
 def shopping_list():
     if request.method == "GET":
 
-        return get_list()
+        return get_shopping_list()
 
     elif request.method == "PUT":
         print(request.data)
@@ -62,6 +58,12 @@ def lights():
 
     return ["Nothing"]
 
+
+@app.route("/api/life360", methods=['GET'])
+def life360():
+    
+    if request.method == "GET":
+        return get_family_list()
 
 if __name__ == "__main__":
     runListServer()
