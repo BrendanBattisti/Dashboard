@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 
 def runListServer():
-    subprocess.Popen(['node', r'.\listServer.js'])
+    subprocess.Popen(['node', r'listServer.js'])
 
 
 @app.route('/api/weather')
