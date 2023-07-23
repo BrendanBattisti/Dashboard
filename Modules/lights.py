@@ -12,7 +12,7 @@ import json
 from Modules.utils import get_datetime_int, debug_msg
 from env import LIGHTS_FILE
 
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+#asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 def save_lights(data):
