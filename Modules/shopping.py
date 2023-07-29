@@ -4,16 +4,11 @@ Shopping module
 import json
 import requests
 
-
-def get_config() -> dict:
-    with open('nodeEnv.json') as json_file:
-        return json.load(json_file)
+import Modules.nodejs
 
 
-def get_url() -> str:
-    config = get_config()
-
-    return f"http://localhost:{config['server']['port']}/shopping"
+def get_url():
+    return Modules.nodejs.get_url("shopping")
 
 
 def get_shopping_list() -> bytes:

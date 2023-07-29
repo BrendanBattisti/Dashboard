@@ -9,4 +9,4 @@
 light_data.json
 threads.json
 /nodeEnv.json
-*.pyc
+/__pycache__/

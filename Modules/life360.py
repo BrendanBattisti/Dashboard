@@ -3,17 +3,11 @@ Life 360 module for Dashboard
 """
 import json
 import requests
+import Modules.nodejs
 
 
-def get_config() -> dict:
-    with open('nodeEnv.json') as json_file:
-        return json.load(json_file)
-
-
-def get_url() -> str:
-    config = get_config()
-
-    return f"http://localhost:{config['server']['port']}/life360"
+def get_url():
+    return Modules.nodejs.get_url("life360")
 
 
 def get_family_list() -> bytes:
