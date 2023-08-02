@@ -16,5 +16,11 @@ def get_shopping_list() -> bytes:
     return response.content
 
 
-def remove_from_list(name: str) -> None:
-    requests.delete(get_url(), params={'name': name})
+def remove_from_list(name: str):
+    data = requests.delete(get_url(), json={'item': name})
+    return json.loads(data.content)
+
+
+def add_to_list(item: str):
+    data = requests.post(get_url(), json={'item': item})
+    return json.loads(data.content)
