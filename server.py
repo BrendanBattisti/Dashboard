@@ -8,7 +8,7 @@ import subprocess
 
 from Modules.life360 import get_family_list
 from Modules.lights import get_lights, send_update_lights, update_device_state
-from Modules.shopping import get_shopping_list, remove_from_list
+from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
 from Modules.weather import get_weather_data
 from Modules.reddit import top_threads
 from env import PORT
@@ -25,18 +25,20 @@ def weather():
     return get_weather_data()
 
 
-@app.route('/api/shopping', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/shopping', methods=['GET', 'POST'])
 def shopping_list():
     if request.method == "GET":
 
         return get_shopping_list()
 
-    elif request.method == "PUT":
-        print(request.data)
+    elif request.method == "POST":
 
-    elif request.method == "DELETE":
-        print(request.data)
-        # return remove_from_list()
+        return add_to_list(json.loads(request.data)['item'])
+
+
+@app.route('/api/shopping/<item>', methods=['DELETE'])
+def shopping_delete(item):
+    return remove_from_list(item)
 
 
 @app.route("/api/reddit")
@@ -61,9 +63,9 @@ def lights():
 
 @app.route("/api/life360", methods=['GET'])
 def life360():
-    
     if request.method == "GET":
         return get_family_list()
+
 
 if __name__ == "__main__":
     runListServer()

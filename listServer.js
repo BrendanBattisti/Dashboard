@@ -3,6 +3,8 @@ const AnyList = require("anylist");
 var express = require("express");
 const life360 = require("life360-node-api");
 var app = express();
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 
 const config = JSON.parse(fs.readFileSync("nodeEnv.json"));
 
@@ -17,31 +19,31 @@ function getName(item) {
 
 async function updatedList() {
   await any.getLists();
-  return any.getListByName(config.shopping.list).items;
+  return any.getListByName(config.shopping.list);
 }
 
 async function getList() {
   list = await updatedList();
-  return list.map(getName);
+  return list.items.map(getName);
 }
 
 async function addItem(item) {
   list = await updatedList();
 
-  let any_item = any.createItem(item);
+  let any_item = any.createItem({ name: item });
 
   any_item = await list.addItem(any_item);
-
+  console.log(any_item);
   await any_item.save();
+  return list.items.map(getName);
 }
 
 async function deleteItem(item) {
   list = await updatedList();
-  let any_item = any.createItem(item);
+  let any_item = list.getItemByName(item);
+  await list.removeItem(any_item);
 
-  list.removeItem(any_item);
-
-  await any_item.save();
+  return list.items.map(getName);
 }
 
 // Login to Life360 and retrieve the client
@@ -104,8 +106,13 @@ any.login().then(async () => {
   });
 
   app.delete("/shopping", async function (req, res) {
-    console.log(req.params);
-    console.log(req.body);
+    const result = await deleteItem(req.body.item);
+    res.json(result);
+  });
+
+  app.post("/shopping", async function (req, res) {
+    const result = await addItem(req.body.item);
+    res.json(result);
   });
 
   // Define the GET route for "/life360"
@@ -125,7 +132,7 @@ any.login().then(async () => {
             console.log(
               `${member.location.latitude}, ${member.location.longitude}`
             );
-            7;
+
             console.log(member.location.name);
           }
         }
