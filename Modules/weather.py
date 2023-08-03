@@ -4,23 +4,24 @@ Weather Module for dashboard
 
 import datetime
 import json
-from typing import Any
+from typing import Tuple
 
 import requests
 
-from Modules.utils import debug_msg
+from Modules.utils import annotate, debug_msg
 from env import WEATHER_API_KEY as API_KEY, WEATHER_FILE
 
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
 
-def get_coordinates(city, state) -> tuple[Any, Any]:
+
+def get_coordinates(city, state) -> Tuple[str]:
     debug_msg("Getting coordinates")
     response = requests.get(f"http://api.openweathermap.org/geo/1.0/direct?q={city}, {state}&limit={5}&appid={API_KEY}")
     data = json.loads(response.content)[0]
     return data['lat'], data['lon']
 
-
+@annotate
 def fetch_weather_data(city, state):
     debug_msg("Getting weather data")
     lat, lon = get_coordinates(city, state)
@@ -29,14 +30,14 @@ def fetch_weather_data(city, state):
     data = json.loads(response.content)
     return data
 
-
+@annotate
 def get_weather_datetime(weather_data):
     """
     Gets the datetime stamps from a weather data file
     """
     return datetime.datetime.fromtimestamp(weather_data[0]['chunks'][0]['dt'])
 
-
+@annotate
 def load_weather_data():
     """
     Loads weather data from the server's storage
@@ -48,7 +49,7 @@ def load_weather_data():
     except FileNotFoundError:
         return refresh_weather_data()
 
-
+@annotate
 def save_weather_data(weather_data) -> None:
     """
     Saves weather data in the server's storage
@@ -57,7 +58,7 @@ def save_weather_data(weather_data) -> None:
     with open(WEATHER_FILE, 'w') as weather_data_file:
         json.dump(weather_data, weather_data_file, indent=2)
 
-
+@annotate
 def format_weather_data(raw_weather_data):
     """
     Formats weather data into a format to be stored in and sent to the server
@@ -93,7 +94,7 @@ def format_weather_data(raw_weather_data):
 
     return new_weather_data
 
-
+@annotate
 def refresh_weather_data():
     """
     Refreshes the server's stored weather data
@@ -104,7 +105,7 @@ def refresh_weather_data():
     save_weather_data(weather_data)
     return weather_data
 
-
+@annotate
 def get_weather_data():
     """
     Gets weather data and checks if new data needs to be fetched

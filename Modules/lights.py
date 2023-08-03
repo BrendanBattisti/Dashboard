@@ -4,80 +4,105 @@ Server module for controlling lights in the house
 from datetime import datetime, timedelta
 from typing import Dict
 
-import kasa.smartdevice
-from kasa import SmartPlug, Discover
+
 import asyncio
 import json
 
-from Modules.utils import get_datetime_int, debug_msg
+
+from Modules.utils import annotate, get_datetime_int, debug_msg
 from env import LIGHTS_FILE
 
-#asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+class KasaInterface:
+
+    def __init__(self, light_file: str, logger) -> None:
+        
+        try: 
+            import kasa.smartdevice
+            from kasa import SmartPlug, Discover
+            self.kasa = kasa
+            self.SmartPlug = SmartPlug
+            self.Discover = Discover
+        except ImportError:
+            self.active = False
+        else:
+            self.active = True
 
 
-def save_lights(data):
-    with open(LIGHTS_FILE, 'w') as json_file:
-        json.dump(data, json_file, indent=2)
+        self.data = {}
+        self.light_file = light_file
+
+    def require_active(self, f):
+
+        def inner():
+
+            if self.active:
+                return f()
+            return None
+        return inner
+    
+    def save_lights(self) -> None:
+        with open(LIGHTS_FILE, 'w') as json_file:
+            json.dump(self.data, json_file, indent=2)
+
+    def load_lights(self) -> None:
+        try:
+            with open(LIGHTS_FILE) as json_file:
+                data = json.load(json_file)
+                self.data = json_storage_format(format_lights(data))
+
+        except FileNotFoundError:
+            self.data = {}
+
+    @require_active
+    def update_lights(self) -> None:
+        debug_msg("Updating Lights")
+        discovered_devices = asyncio.run(self.Discover.discover(target="10.0.1.255"))
+
+        self.devices = json_storage_format(format_lights(discovered_devices))
+
+        self.save_lights()
 
 
-def load_lights():
-    try:
-        with open(LIGHTS_FILE) as json_file:
-            return json.load(json_file)
+    @annotate
+    def send_update_lights(self):
+        self.update_lights()
+        return self.format_for_sending(self.data)
 
-    except FileNotFoundError:
-        return {}
+    @annotate
+    def get_lights(self):
+        self.refresh_lights()
+        return self.format_for_sending(self.data)
 
+    def format_for_sending(self) -> list:
+        return [{"name": x['name'], "on": x['on']} for x in self.data['devices']]
 
-def update_lights():
-    debug_msg("Updating Lights")
-    discovered_devices = asyncio.run(Discover.discover(target="10.0.1.255"))
+    @annotate
+    def refresh_lights(self):
+        debug_msg("Refreshing lights")
+        self.load_lights()
 
-    devices = json_storage_format(format_lights(discovered_devices))
+        if not devices: self.update_lights()
 
-    save_lights(devices)
+        else:
 
-    return devices
+            time_since_update = datetime.fromtimestamp(devices['dt']) - datetime.now()
 
+            if time_since_update > timedelta(days=1):
+                new_devices = update_lights()
 
-def send_update_lights():
-    return format_for_sending(update_lights())
+                if len(new_devices) < len(devices):
+                    return devices
 
+                devices = new_devices
 
-def get_lights():
-    return format_for_sending(refresh_lights())
+        return devices
 
+    @annotate
+    def json_storage_format(light_data: list) -> dict:
+        return {'dt': get_datetime_int(), 'devices': light_data}
 
-def format_for_sending(devices: dict) -> list:
-    return [{"name": x['name'], "on": x['on']} for x in devices['devices']]
-
-
-def refresh_lights():
-    debug_msg("Refreshing lights")
-    devices = load_lights()
-
-    if not devices:
-        devices = update_lights()
-
-    else:
-
-        time_since_update = datetime.fromtimestamp(devices['dt']) - datetime.now()
-
-        if time_since_update > timedelta(days=1):
-            new_devices = update_lights()
-
-            if len(new_devices) < len(devices):
-                return devices
-
-            devices = new_devices
-
-    return devices
-
-
-def json_storage_format(light_data: list) -> dict:
-    return {'dt': get_datetime_int(), 'devices': light_data}
-
-
+@annotate
 def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
     formatted_lights = [None] * len(lights_data)
 
@@ -91,7 +116,7 @@ def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
         formatted_lights[i] = new_item
     return formatted_lights
 
-
+@annotate
 async def kasa_new_state(device: SmartPlug, new_state: bool):
     await device.update()
 
@@ -100,7 +125,7 @@ async def kasa_new_state(device: SmartPlug, new_state: bool):
     else:
         await (device.turn_off())
 
-
+@annotate
 def update_device_state(name: str, new_state: bool):
     devices = refresh_lights()['devices']
 

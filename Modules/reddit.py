@@ -7,7 +7,7 @@ from typing import List
 
 import praw as praw
 
-from Modules.utils import get_datetime_int, debug_msg
+from Modules.utils import annotate, get_datetime_int, debug_msg
 from env import REDDIT_USER, SUBREDDITS_FILE, THREADS_FILE
 
 
@@ -27,7 +27,6 @@ class Thread:
     comments: int
     link: str
     subreddit_img: str
-
 
 def login_user(user: User) -> praw.Reddit:
     """
@@ -50,7 +49,7 @@ def login_user(user: User) -> praw.Reddit:
 
     return reddit
 
-
+@annotate
 def get_top_threads(limit: int = 5):
     debug_msg("Getting top threads")
     reddit = login_user(User(**REDDIT_USER))
@@ -77,12 +76,11 @@ def get_top_threads(limit: int = 5):
             index += 1
     return {"dt": get_datetime_int(), "threads": [dataclasses.asdict(x) for x in threads if x is not None]}
 
-
 def save_threads(filename: str, threads) -> None:
     with open(filename, 'w') as json_file:
         json.dump(threads, json_file, indent=2)
 
-
+@annotate
 def load_threads(filename: str):
     debug_msg("Loading Threads")
     try:
@@ -97,7 +95,7 @@ def load_threads(filename: str):
 def get_subreddits() -> List[str]:
     return ['technology']
 
-
+@annotate
 def top_threads():
     threads = load_threads(THREADS_FILE)
 

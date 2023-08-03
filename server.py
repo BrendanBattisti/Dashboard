@@ -58,7 +58,7 @@ def lights():
         data = json.loads(data)
         return update_device_state(data['name'], data['on'])
 
-    return ["Nothing"]
+    return "Nothing"
 
 
 @app.route("/api/life360", methods=['GET'])
