@@ -1,23 +1,48 @@
 """
 Server module for controlling lights in the house
 """
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Dict
-
+from typing import Dict, List
 
 import asyncio
 import json
 
-
-from Modules.utils import annotate, get_datetime_int, debug_msg
+from Modules.utils import annotate, get_datetime_int, debug_msg, Loggable
 from env import LIGHTS_FILE
 
 
-class KasaInterface:
+@dataclass
+class Light:
+    ip: str
+    on: bool
+    name: str
+
+    def __init__(self, key, value):
+        self.ip = key
+        self.on = value.is_on
+        self.name = value.alias
+
+    def to_public(self):
+        return PublicLight(self)
+
+
+@dataclass
+class PublicLight:
+    on: bool
+    name: str
+
+    def __init__(self, light: Light):
+        self.on = light.on
+        self.name = light.name
+
+
+class KasaInterface(Loggable):
 
     def __init__(self, light_file: str, logger) -> None:
-        
-        try: 
+
+        super().__init__(logger)
+        try:
             import kasa.smartdevice
             from kasa import SmartPlug, Discover
             self.kasa = kasa
@@ -28,61 +53,63 @@ class KasaInterface:
         else:
             self.active = True
 
-
         self.data = {}
         self.light_file = light_file
 
     def require_active(self, f):
 
         def inner():
-
             if self.active:
                 return f()
             return None
+
         return inner
-    
+
     def save_lights(self) -> None:
         with open(LIGHTS_FILE, 'w') as json_file:
-            json.dump(self.data, json_file, indent=2)
+            json.dump(self.storage_format(), json_file, indent=2)
 
     def load_lights(self) -> None:
         try:
             with open(LIGHTS_FILE) as json_file:
                 data = json.load(json_file)
-                self.data = json_storage_format(format_lights(data))
+                self.data = data['devices']
 
         except FileNotFoundError:
             self.data = {}
 
+    def data_to_public_json(self) -> List[PublicLight]:
+        return [device.to_public() for device in self.data]
+
+    def storage_format(self) -> dict:
+        return {'dt': get_datetime_int(), 'devices': self.data}
+
     @require_active
     def update_lights(self) -> None:
-        debug_msg("Updating Lights")
+        self.log("Updating Lights")
         discovered_devices = asyncio.run(self.Discover.discover(target="10.0.1.255"))
 
-        self.devices = json_storage_format(format_lights(discovered_devices))
+        self.data = [Light(ip, device) for ip, device in discovered_devices.items()]
 
         self.save_lights()
 
-
     @annotate
-    def send_update_lights(self):
+    def send_update_lights(self) -> List[PublicLight]:
         self.update_lights()
-        return self.format_for_sending(self.data)
+        return self.data_to_public_json()
 
-    @annotate
-    def get_lights(self):
+    @require_active
+    def get_lights(self) -> List[PublicLight]:
         self.refresh_lights()
-        return self.format_for_sending(self.data)
-
-    def format_for_sending(self) -> list:
-        return [{"name": x['name'], "on": x['on']} for x in self.data['devices']]
+        return self.data_to_public_json()
 
     @annotate
     def refresh_lights(self):
         debug_msg("Refreshing lights")
         self.load_lights()
 
-        if not devices: self.update_lights()
+        if not self.data:
+            self.update_lights()
 
         else:
 
@@ -98,9 +125,6 @@ class KasaInterface:
 
         return devices
 
-    @annotate
-    def json_storage_format(light_data: list) -> dict:
-        return {'dt': get_datetime_int(), 'devices': light_data}
 
 @annotate
 def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
@@ -116,6 +140,7 @@ def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
         formatted_lights[i] = new_item
     return formatted_lights
 
+
 @annotate
 async def kasa_new_state(device: SmartPlug, new_state: bool):
     await device.update()
@@ -124,6 +149,7 @@ async def kasa_new_state(device: SmartPlug, new_state: bool):
         await (device.turn_on())
     else:
         await (device.turn_off())
+
 
 @annotate
 def update_device_state(name: str, new_state: bool):

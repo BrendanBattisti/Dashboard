@@ -23,6 +23,14 @@ def annotate(f):
         return result
     return inner
 
+class Loggable:
+
+    def __init__(self, logger):
+        self.logger = logger
+
+    def log(self, msg):
+        self.logger.log(msg)
+
 class Logger(ABC):
 
     def __init__(self) -> None:
