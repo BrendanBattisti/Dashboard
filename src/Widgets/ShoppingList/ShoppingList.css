@@ -1,0 +1,39 @@
+.shopping-list-container {
+  position: relative;
+  background: rgba(0, 255, 255, 0.05);
+  width: 300px;
+  height: 300px;
+  overflow-y: hidden;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 255, 255, 0.6);
+}
+
+.shopping-list-content {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 8px; /* Add a padding to make room for the scrollbar */
+}
+
+.shopping-list-scrollbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  background-color: transparent; /* Make the scrollbar invisible */
+}
+
+.shopping-list-scrollbar-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: var(
+    --scrollbar-handle-height,
+    0
+  ); /* Use CSS variable to set the handle height */
+  background-color: rgba(0, 255, 255, 0.8); /* Set the scrollbar handle color */
+  border-radius: 4px; /* Make the handle circular */
+  cursor: pointer;
+}

@@ -3,7 +3,7 @@ body {
   background-color: rgb(29, 24, 24);
   color: rgba(0, 238, 255);
   font-family: "Anton", sans-serif;
-  overflow: hidden; /* Hide scrollbars */
+  /*overflow: hidden;*/ /* Hide scrollbars */
 }
 
 .vertical_flex {
