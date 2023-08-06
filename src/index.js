@@ -22,16 +22,22 @@ root.render(
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
     <div className="horizontal_flex">
-    <div className="vertical_flex">
-      <Clock />
-      <Reddit />
-      <Lights />
+      <div className="vertical_flex">
+        <Clock />
+        <></> <Weather />
+      </div>
+      <div className="vertical_flex">
+        <></>
+        <></>
+        <ShoppingList />
+      </div>
+      <div className="vertical_flex">
+        <Lights />
+        <Reddit />
+        <Life360 />
+      </div>
     </div>
-    <div className="vertical_flex">
-      <Weather />
-      <ShoppingList />
-    </div>
-    </div>
+    s
   </React.StrictMode>
 );
 
