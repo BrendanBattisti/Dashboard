@@ -2,10 +2,12 @@
 Shopping module
 """
 import json
+
 import requests
 
 import Modules.nodejs
 from Modules.utils import annotate
+
 
 @annotate
 def get_url():

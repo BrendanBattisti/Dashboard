@@ -1,6 +1,7 @@
 import datetime
-from env import DEBUG
 from abc import ABC, abstractmethod
+
+from env import DEBUG
 
 
 def get_datetime_int():

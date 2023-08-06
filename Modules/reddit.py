@@ -8,7 +8,7 @@ from typing import List
 import praw as praw
 
 from Modules.utils import annotate, get_datetime_int, debug_msg
-from env import REDDIT_USER, SUBREDDITS_FILE, THREADS_FILE
+from env import REDDIT_USER, THREADS_FILE
 
 
 @dataclass

@@ -4,7 +4,7 @@ Weather Module for dashboard
 
 import datetime
 import json
-from typing import Tuple
+from typing import Any
 
 import requests
 
@@ -14,12 +14,12 @@ from env import WEATHER_API_KEY as API_KEY, WEATHER_FILE
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
 
-
-def get_coordinates(city, state) -> Tuple[str]:
+def get_coordinates(city, state) -> tuple[Any, Any]:
     debug_msg("Getting coordinates")
     response = requests.get(f"http://api.openweathermap.org/geo/1.0/direct?q={city}, {state}&limit={5}&appid={API_KEY}")
     data = json.loads(response.content)[0]
     return data['lat'], data['lon']
+
 
 @annotate
 def fetch_weather_data(city, state):
@@ -30,12 +30,14 @@ def fetch_weather_data(city, state):
     data = json.loads(response.content)
     return data
 
+
 @annotate
 def get_weather_datetime(weather_data):
     """
     Gets the datetime stamps from a weather data file
     """
     return datetime.datetime.fromtimestamp(weather_data[0]['chunks'][0]['dt'])
+
 
 @annotate
 def load_weather_data():
@@ -49,6 +51,7 @@ def load_weather_data():
     except FileNotFoundError:
         return refresh_weather_data()
 
+
 @annotate
 def save_weather_data(weather_data) -> None:
     """
@@ -57,6 +60,7 @@ def save_weather_data(weather_data) -> None:
 
     with open(WEATHER_FILE, 'w') as weather_data_file:
         json.dump(weather_data, weather_data_file, indent=2)
+
 
 @annotate
 def format_weather_data(raw_weather_data):
@@ -94,6 +98,7 @@ def format_weather_data(raw_weather_data):
 
     return new_weather_data
 
+
 @annotate
 def refresh_weather_data():
     """
@@ -104,6 +109,7 @@ def refresh_weather_data():
     weather_data = format_weather_data(raw_weather_data)
     save_weather_data(weather_data)
     return weather_data
+
 
 @annotate
 def get_weather_data():
