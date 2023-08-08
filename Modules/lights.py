@@ -94,7 +94,7 @@ class KasaInterface(Loggable):
         return self.data_to_public_json()
 
     @annotate
-    def refresh_lights(self) -> list[PublicLight]:
+    def refresh_lights(self) -> List[PublicLight]:
         self.log("Refreshing lights")
         self.load_lights()
 
