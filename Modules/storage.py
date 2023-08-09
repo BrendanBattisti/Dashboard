@@ -35,14 +35,12 @@ class Storage(Loggable, metaclass=ABCMeta):
         self.data[name]['refresh_time'] = get_datetime_int()
         self.save()
 
-    @abstractmethod
     def get_weather(self):
         return self._generic_get('weather')
 
     def save_weather(self, data):
         self._generic_save(data, 'weather')
 
-    @abstractmethod
     def get_reddit(self):
         return self._generic_get('reddit')
 
@@ -50,7 +48,6 @@ class Storage(Loggable, metaclass=ABCMeta):
     def save_reddit(self, data):
         self._generic_save(data, 'reddit')
 
-    @abstractmethod
     def get_lights(self):
         return self._generic_get('lights')
 
@@ -75,7 +72,7 @@ class FileStorage(Storage, ABC):
     def save(self) -> None:
         super().save()
         with open(self.file_path, 'w') as file:
-            json.dump(file, self.data)
+            json.dump(file, self.data, indent=2)
     
     def load(self) -> None:
         

@@ -5,21 +5,24 @@ import json
 import subprocess
 
 from flask import Flask, request
+from Modules.storage import FileStorage
 
 import env
 from Modules.life360 import get_family_list
 from Modules.lights import KasaInterface
 from Modules.reddit import RedditInterface
 from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
-from Modules.utils import PrintLogger
+from Modules.utils import FileLogger
 from Modules.weather import get_weather_data
 from env import PORT
 
 app = Flask(__name__)
 
-logger = PrintLogger()
-kasa = KasaInterface(env.LIGHTS_FILE, logger)
-reddit = RedditInterface()
+
+logger = FileLogger("log.txt")
+storage = FileStorage("data.json", logger)
+kasa = KasaInterface(storage, logger)
+#reddit = RedditInterface()
 
 def runListServer():
     subprocess.Popen(['node', r'listServer.js'])
@@ -48,7 +51,8 @@ def shopping_delete(item):
 
 @app.route("/api/reddit")
 def reddit():
-    return top_threads()
+    pass
+    #return top_threads()
 
 
 @app.route('/api/lights', methods=['GET', 'PUT'])

@@ -33,7 +33,6 @@ class RedditInterface(Loggable):
 
         if user is None:
             self.active = False
-            return
 
         try:
             import praw

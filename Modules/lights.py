@@ -59,19 +59,10 @@ class KasaInterface(Loggable):
         self.storage = storage
         self.recent_update = 0
 
-    def save_lights(self) -> None:
-        with open(self.light_file, 'w') as json_file:
-            json.dump(self.storage_format(), json_file, indent=2)
-
     def load_lights(self) -> None:
-        try:
-            with open(self.light_file) as json_file:
-                data = json.load(json_file)
-                self.data = {k: Light(**v) for k, v in data['devices'].items()}
-                self.recent_update = data['dt']
-
-        except FileNotFoundError:
-            self.data = {}
+        
+        data = self.storage.get_lights()
+        self.data = {k: Light(**v) for k, v in data['devices'].items()}
 
     def data_to_public_json(self) -> List[PublicLight]:
         return [device.to_public() for device in self.data.values()]
@@ -85,7 +76,7 @@ class KasaInterface(Loggable):
             discovered_devices = asyncio.run(self.Discover.discover(target="10.0.1.255"))
             self.recent_update = get_datetime_int()
             self.data = {ip: from_kasa(ip, device) for ip, device in discovered_devices.items()}
-            self.save_lights()
+            self.storage.save_lights(self.data)
         return self.data_to_public_json()
 
     def get_lights(self) -> List[PublicLight]:
