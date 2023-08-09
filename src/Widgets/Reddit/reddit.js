@@ -54,8 +54,7 @@ export default function Reddit() {
       </div>
     );
   }
-  if (data != null) {
-    return <div className={styles.container}>{data.map(Thread)}</div>;
-  } else {
-  }
+
+  const content = <div className={styles.container}>{data.map(Thread)}</div>;
+  return data.length == 0 ? content : null;
 }

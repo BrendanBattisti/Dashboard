@@ -6,13 +6,18 @@ import { Switch, Button } from "@mui/material";
 
 // Widget for monitoring and controlling the smart lights in the house
 export default function Lights() {
-  const [lightsData, setLights] = useState([]);
+  const [data, setData] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("api/lights");
-      setLights(response.data);
+      await axios("api/lights")
+        .then((data) => {
+          setData(data.data);
+        })
+        .catch((error) => {
+          console.log(error.response.status);
+        });
     };
 
     setInterval(() => {
@@ -26,7 +31,7 @@ export default function Lights() {
 
     const response = await axios.put("api/lights", payload);
 
-    setLights(response.data);
+    setData(response.data);
   }
 
   function capitalizeFirstLetter(string) {
@@ -80,11 +85,12 @@ export default function Lights() {
       </div>
     );
   }
-
-  return (
-    <div className={styles.lights}>
-      <div>{LightsList(lightsData)}</div>
-      <Control />
-    </div>
-  );
+  if (data.length != 0) {
+    return (
+      <div className={styles.lights}>
+        <div>{LightsList(data)}</div>
+        <Control />
+      </div>
+    );
+  }
 }

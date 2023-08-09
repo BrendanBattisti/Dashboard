@@ -24,9 +24,11 @@ root.render(
       <div className="vertical_flex">
         <Clock />
         <Reddit />
+        <Lights />
       </div>
       <div className="vertical_flex">
         <Weather />
+        <ShoppingList />
       </div>
     </div>
   </React.StrictMode>

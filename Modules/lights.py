@@ -9,7 +9,6 @@ from datetime import timedelta
 from typing import List
 
 from Modules.utils import annotate, get_datetime_int, Loggable, get_time_difference
-from env import LIGHTS_FILE
 
 
 @dataclass
@@ -61,12 +60,12 @@ class KasaInterface(Loggable):
         self.light_file = light_file
 
     def save_lights(self) -> None:
-        with open(LIGHTS_FILE, 'w') as json_file:
+        with open(self.light_file, 'w') as json_file:
             json.dump(self.storage_format(), json_file, indent=2)
 
     def load_lights(self) -> None:
         try:
-            with open(LIGHTS_FILE) as json_file:
+            with open(self.light_file) as json_file:
                 data = json.load(json_file)
                 self.data = {k: Light(**v) for k, v in data['devices'].items()}
                 self.recent_update = data['dt']
