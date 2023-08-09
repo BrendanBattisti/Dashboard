@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import datetime
 from abc import ABC, abstractmethod
 
@@ -25,6 +26,10 @@ def annotate(f):
 
     return inner
 
+@dataclass
+class Configuration:
+
+    pass
 
 class Loggable:
 

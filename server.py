@@ -9,7 +9,7 @@ from flask import Flask, request
 import env
 from Modules.life360 import get_family_list
 from Modules.lights import KasaInterface
-from Modules.reddit import top_threads
+from Modules.reddit import RedditInterface
 from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
 from Modules.utils import PrintLogger
 from Modules.weather import get_weather_data
@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 logger = PrintLogger()
 kasa = KasaInterface(env.LIGHTS_FILE, logger)
-
+reddit = RedditInterface()
 
 def runListServer():
     subprocess.Popen(['node', r'listServer.js'])
