@@ -4,7 +4,7 @@ Weather Module for dashboard
 
 import datetime
 import json
-from typing import Any
+from typing import Any, Tuple
 
 import requests
 
@@ -14,7 +14,7 @@ from env import WEATHER_API_KEY as API_KEY, WEATHER_FILE
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
 
-def get_coordinates(city, state) -> tuple[Any, Any]:
+def get_coordinates(city, state) -> Tuple[Any, Any]:
     debug_msg("Getting coordinates")
     response = requests.get(f"http://api.openweathermap.org/geo/1.0/direct?q={city}, {state}&limit={5}&appid={API_KEY}")
     data = json.loads(response.content)[0]
