@@ -7,8 +7,9 @@ import json
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import List
+from Modules.storage import Storage
 
-from Modules.utils import annotate, get_datetime_int, Loggable, get_time_difference
+from Modules.utils import Logger, annotate, get_datetime_int, Loggable, get_time_difference
 
 
 @dataclass
@@ -41,7 +42,7 @@ class PublicLight:
 
 class KasaInterface(Loggable):
 
-    def __init__(self, light_file: str, logger) -> None:
+    def __init__(self, storage: Storage, logger: Logger) -> None:
 
         super().__init__(logger)
         try:
@@ -55,9 +56,8 @@ class KasaInterface(Loggable):
         else:
             self.active = True
 
-        self.data = {}
+        self.storage = storage
         self.recent_update = 0
-        self.light_file = light_file
 
     def save_lights(self) -> None:
         with open(self.light_file, 'w') as json_file:

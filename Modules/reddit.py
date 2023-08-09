@@ -31,6 +31,10 @@ class RedditInterface(Loggable):
     def __init__(self, user: Union[User, dict], file: str, subreddits: List[str], logger: Logger):
         super().__init__(logger)
 
+        if user is None:
+            self.active = False
+            return
+
         try:
             import praw
             self.praw = praw

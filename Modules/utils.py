@@ -29,7 +29,18 @@ def annotate(f):
 @dataclass
 class Configuration:
 
-    pass
+    # Server
+    port: int
+    debug: bool
+
+    # Reddit
+    reddit_user: str
+    reddit_password: str
+
+    # Weather
+    weather_key: str
+
+
 
 class Loggable:
 
@@ -57,3 +68,22 @@ class PrintLogger(Logger):
 
     def log(self, msg) -> None:
         print(msg)
+
+class BlankLogger(Logger):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def log(self, msg) -> None:
+        pass
+
+class FileLogger(Logger):
+
+    def __init__(self, file_path: str) -> None:
+        super().__init__()
+        self.path = file_path
+
+    def log(self, msg):
+
+        with open(self.path, 'w') as log_file:
+            log_file.write(msg)
