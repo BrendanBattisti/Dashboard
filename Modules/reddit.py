@@ -28,7 +28,7 @@ class Thread:
 
 class RedditInterface(Loggable):
 
-    def __init__(self, user: Union[User, dict], file: str, logger: Logger):
+    def __init__(self, user: Union[User, dict], file: str, subreddits: List[str], logger: Logger):
         super().__init__(logger)
 
         try:
@@ -40,6 +40,7 @@ class RedditInterface(Loggable):
 
         self.reddit = self.login_user(user)
         self.file = file
+        self.subreddits = subreddits
 
     def login_user(self, user: Union[dict, User]) -> 'praw.Reddit':
         """
@@ -70,12 +71,11 @@ class RedditInterface(Loggable):
         self.log("Getting top threads")
         
 
-        subreddits = self.get_subreddits()
 
         index = 0
-        threads = [None] * len(subreddits) * limit
+        threads = [None] * len(self.subreddits) * limit
 
-        for sub in subreddits:
+        for sub in self.subreddits:
             subreddit = self.reddit.subreddit(sub)
 
             # Scrape the threads
