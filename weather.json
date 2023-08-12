@@ -1,0 +1,257 @@
+[
+  {
+    "chunks": [
+      {
+        "dt": 1691614800,
+        "temp": 81.48,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691625600,
+        "temp": 78.58,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691636400,
+        "temp": 75.2,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691647200,
+        "temp": 67.44,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691658000,
+        "temp": 65.41,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691668800,
+        "temp": 64.58,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691679600,
+        "temp": 65.97,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691690400,
+        "temp": 73.9,
+        "weather": "cloud"
+      }
+    ],
+    "weekday": 2,
+    "day": 9,
+    "month": 8,
+    "index": 0,
+    "high": 81.48,
+    "low": 64.58,
+    "weather": "cloud"
+  },
+  {
+    "chunks": [
+      {
+        "dt": 1691701200,
+        "temp": 75.56,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691712000,
+        "temp": 64.2,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691722800,
+        "temp": 63.21,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691733600,
+        "temp": 62.26,
+        "weather": "sunny"
+      },
+      {
+        "dt": 1691744400,
+        "temp": 60.06,
+        "weather": "sunny"
+      },
+      {
+        "dt": 1691755200,
+        "temp": 61.92,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691766000,
+        "temp": 68.67,
+        "weather": "sunny"
+      },
+      {
+        "dt": 1691776800,
+        "temp": 71.85,
+        "weather": "cloud"
+      }
+    ],
+    "weekday": 3,
+    "day": 10,
+    "month": 8,
+    "index": 1,
+    "high": 75.56,
+    "low": 60.06,
+    "weather": "sunny"
+  },
+  {
+    "chunks": [
+      {
+        "dt": 1691787600,
+        "temp": 73.29,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691798400,
+        "temp": 67.44,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691809200,
+        "temp": 64.29,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691820000,
+        "temp": 62.56,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691830800,
+        "temp": 63.75,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691841600,
+        "temp": 67.24,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691852400,
+        "temp": 73.27,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691863200,
+        "temp": 80.33,
+        "weather": "rainy"
+      }
+    ],
+    "weekday": 4,
+    "day": 11,
+    "month": 8,
+    "index": 2,
+    "high": 80.33,
+    "low": 62.56,
+    "weather": "cloud"
+  },
+  {
+    "chunks": [
+      {
+        "dt": 1691874000,
+        "temp": 78.96,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691884800,
+        "temp": 73.71,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691895600,
+        "temp": 67.19,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691906400,
+        "temp": 64.26,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691917200,
+        "temp": 61.77,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691928000,
+        "temp": 62.98,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691938800,
+        "temp": 66.79,
+        "weather": "rainy"
+      },
+      {
+        "dt": 1691949600,
+        "temp": 70.47,
+        "weather": "rainy"
+      }
+    ],
+    "weekday": 5,
+    "day": 12,
+    "month": 8,
+    "index": 3,
+    "high": 78.96,
+    "low": 61.77,
+    "weather": "rainy"
+  },
+  {
+    "chunks": [
+      {
+        "dt": 1691960400,
+        "temp": 69.89,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691971200,
+        "temp": 66.04,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691982000,
+        "temp": 63.36,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1691992800,
+        "temp": 62.06,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1692003600,
+        "temp": 58.95,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1692014400,
+        "temp": 62.35,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1692025200,
+        "temp": 71.26,
+        "weather": "cloud"
+      },
+      {
+        "dt": 1692036000,
+        "temp": 69.76,
+        "weather": "rainy"
+      }
+    ],
+    "weekday": 6,
+    "day": 13,
+    "month": 8,
+    "index": 4,
+    "high": 71.26,
+    "low": 58.95,
+    "weather": "cloud"
+  }
+]
