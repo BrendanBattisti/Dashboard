@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styles from "./ShoppingList.module.css";
+import capitalizeFirstLetter from "../../Util/utils";
 export default function ShoppingList() {
   const [data, setData] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -44,7 +45,7 @@ export default function ShoppingList() {
             key={index}
             className={index % 2 == 0 ? styles.darkitem : styles.lightitem}
           >
-            {item}
+            {capitalizeFirstLetter(item)}
             <button
               className={styles.deleteButton}
               onClick={() => handleDeleteItem(item)}
