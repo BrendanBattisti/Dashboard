@@ -13,7 +13,6 @@ from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
 from Modules.storage import FileStorage
 from Modules.utils import load_config, PrintLogger
 from Modules.weather import WeatherInterface
-from env import PORT
 
 app = Flask(__name__)
 
@@ -84,4 +83,4 @@ def life360():
 
 if __name__ == "__main__":
     runListServer()
-    app.run(port=PORT)
+    app.run(port=config.server_port)

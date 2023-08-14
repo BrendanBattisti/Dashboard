@@ -23,7 +23,8 @@ def annotate(f):
 @dataclass
 class Configuration:
     # Server
-    port: int = 3000
+    server_port: int = 3001
+    node_port: int = 3002
     debug: bool = False
 
     # Storage
@@ -35,6 +36,11 @@ class Configuration:
     reddit_secret: str = ""
     reddit_client_id: str = ""
     reddit_user_agent: str = ""
+
+    # Shopping List
+    shopping_username: str = ""
+    shopping_password: str = ""
+    shopping_list: str = ""
 
     # Weather
     weather_key: str = ""
