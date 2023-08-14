@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./reddit.module.css";
+import { capitalize } from "@mui/material";
+import capitalizeFirstLetter from "../../Util/utils";
 
 // Module for showing trending reddit posts found on the popular page of reddit
 export default function Reddit() {
@@ -38,14 +40,13 @@ export default function Reddit() {
   function Thread(thread, index) {
     return (
       <div className={index === active ? styles.container : styles.hidden}>
-        <div className={styles.row}>
+        <div
+          onClick={() => window.open(thread.link, "_blank")}
+          className={styles.title}
+        >
           <img className={styles.subRedditImage} src={thread.subreddit_img} />
-          <div
-            onClick={() => window.open(thread.link, "_blank")}
-            className={styles.title}
-          >
-            {thread.title}
-          </div>
+
+          {capitalizeFirstLetter(thread.title)}
         </div>
         <div className={styles.numbers_row}>
           <button

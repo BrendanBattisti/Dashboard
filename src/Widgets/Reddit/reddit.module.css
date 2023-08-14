@@ -18,8 +18,11 @@
 
 .subRedditImage {
   border-radius: 50%;
-  height: 10%;
-  width: 10%;
+  max-height: 5vh;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline;
+  margin-right: 1vw;
 }
 
 .numbers_row {
@@ -44,4 +47,10 @@
   border: none;
   color: rgba(0, 255, 255, 0.8);
   cursor: pointer;
+}
+
+.top_chunk {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
 }
