@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import styles from "./lights.module.css";
 import { Switch } from "@mui/material";
-
+import capitalizeFirstLetter from "../../Util/utils";
 // Widget for monitoring and controlling the smart lights in the house
 export default function Lights() {
   const [data, setData] = useState([]);
@@ -48,10 +48,6 @@ export default function Lights() {
       .catch((error) => {
         console.log(error.response.status);
       });
-  }
-
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   function LightSwitch(data, index) {
