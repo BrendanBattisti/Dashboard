@@ -1,12 +1,14 @@
 import json
 
-
-def get_config() -> dict:
-    with open('nodeEnv.json') as json_file:
-        return json.load(json_file)
+from Modules.utils import Loggable
 
 
-def get_url(path: str) -> str:
-    config = get_config()
+class NodeJSInterface(Loggable):
 
-    return f"http://localhost:{config['server']['port']}/" + path
+    def __init__(self, logger, port: int, path: str):
+        super().__init__(logger)
+        self.port = port
+        self.path = path
+
+    def get_url(self) -> str:
+        return f"http://localhost:{self.port}/" + self.path

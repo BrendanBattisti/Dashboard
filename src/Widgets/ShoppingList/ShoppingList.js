@@ -36,7 +36,7 @@ export default function ShoppingList() {
     setData(response.data);
   };
 
-  return (
+  const content = (
     <div className={styles.container}>
       <div className={styles.itemContainer}>
         {data.map((item, index) => (
@@ -61,7 +61,6 @@ export default function ShoppingList() {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
                 }}
-
               >
                 delete
               </span>
