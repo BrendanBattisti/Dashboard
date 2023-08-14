@@ -9,7 +9,7 @@ from flask import Flask, request
 from Modules.life360 import get_family_list
 from Modules.lights import KasaInterface
 from Modules.reddit import RedditInterface
-from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
+from Modules.shopping import ShoppingInterface
 from Modules.storage import FileStorage
 from Modules.utils import load_config, PrintLogger
 from Modules.weather import WeatherInterface
@@ -28,6 +28,7 @@ reddit_interface = RedditInterface({
     "client_id": config.reddit_client_id,
     "user_agent": config.reddit_user_agent
 }, storage, logger)
+shopping_interface = ShoppingInterface(config.node_port, logger)
 
 weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
 
@@ -45,16 +46,16 @@ def weather():
 def shopping_list():
     if request.method == "GET":
 
-        return get_shopping_list()
+        return shopping_interface.get_shopping_list()
 
     elif request.method == "POST":
 
-        return add_to_list(json.loads(request.data)['item'])
+        return shopping_interface.add_to_list(json.loads(request.data)['item'])
 
 
 @app.route('/api/shopping/<item>', methods=['DELETE'])
 def shopping_delete(item):
-    return remove_from_list(item)
+    return shopping_interface.remove_from_list(item)
 
 
 @app.route("/api/reddit")

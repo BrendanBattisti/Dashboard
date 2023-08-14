@@ -5,25 +5,25 @@ import json
 
 import requests
 
-import Modules.nodejs
-from Modules.utils import annotate
+from Modules.nodejs import NodeJSInterface
+from Modules.utils import annotate, Logger
 
 
-@annotate
-def get_url():
-    return Modules.nodejs.get_url("shopping")
+class ShoppingInterface(NodeJSInterface):
 
+    def __init__(self, port: int, logger: Logger):
+        super().__init__(logger, port, "shopping")
 
-def get_shopping_list() -> bytes:
-    response = requests.get(get_url())
-    return response.content
+    def get_shopping_list(self) -> bytes:
+        response = requests.get(self.get_url())
+        return response.content
 
-@annotate
-def remove_from_list(name: str):
-    data = requests.delete(get_url(), json={'item': name})
-    return json.loads(data.content)
+    @annotate
+    def remove_from_list(self, name: str):
+        data = requests.delete(self.get_url(), json={'item': name})
+        return json.loads(data.content)
 
-@annotate
-def add_to_list(item: str):
-    data = requests.post(get_url(), json={'item': item})
-    return json.loads(data.content)
+    @annotate
+    def add_to_list(self, item: str):
+        data = requests.post(self.get_url(), json={'item': item})
+        return json.loads(data.content)
