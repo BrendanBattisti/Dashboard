@@ -20,6 +20,9 @@ class Light:
         return PublicLight(self)
 
 
+
+
+
 def from_kasa(ip: str, device) -> Light:
     return Light(
         ip=ip,
@@ -37,6 +40,8 @@ class PublicLight:
         self.on = light.on
         self.name = light.name
 
+    def __lt__(self, other: 'Light'):
+        return self.name < other.name
 
 class KasaInterface(Loggable):
 
@@ -68,7 +73,9 @@ class KasaInterface(Loggable):
             self.data = {ip: Light(**values) for ip, values in data['data'].items()}
 
     def data_to_public_json(self) -> List[PublicLight]:
-        return [device.to_public() for device in self.data.values()]
+        data = [device.to_public() for device in self.data.values()]
+        data.sort()
+        return data
 
     def storage_format(self) -> dict:
         return {k: dataclasses.asdict(v) for k, v in self.data.items()}
