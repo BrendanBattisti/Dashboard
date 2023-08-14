@@ -26,12 +26,28 @@ export default function Lights() {
     fetchData();
   }, []);
 
+  async function refreshLight() {
+    await axios
+      .put("api/lights")
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
+  }
+
   async function ToggleLight(name, current_state) {
     const payload = { name: name, on: !current_state };
 
-    const response = await axios.put("api/lights", payload);
-
-    setData(response.data);
+    await axios
+      .put("api/lights", payload)
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
   }
 
   function capitalizeFirstLetter(string) {
@@ -74,7 +90,11 @@ export default function Lights() {
             onChange={(event) => setFilter(event.target.value)}
           />
           <div className={styles.buttonContainer}>
-            <Button variant="contained" className="material-symbols-outlined">
+            <Button
+              variant="contained"
+              className="material-symbols-outlined"
+              onClick={() => refreshLight()}
+            >
               refresh
             </Button>
           </div>

@@ -83,6 +83,12 @@ class KasaInterface(Loggable):
             self.data = {ip: from_kasa(ip, device) for ip, device in discovered_devices.items()}
             self.save_lights()
 
+    def refresh_lights(self) -> List[PublicLight]:
+        if self.active:
+            self.log("Refreshing Lights")
+            self.update_lights()
+            return self.data_to_public_json()
+
     def get_lights(self) -> List[PublicLight]:
         self.load_lights()
         return self.data_to_public_json()

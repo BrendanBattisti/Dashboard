@@ -71,7 +71,7 @@ def lights():
     elif request.method == "PUT":
         data = request.data
         if not data:
-            return kasa.get_lights()
+            return kasa.refresh_lights()
         data = json.loads(data)
         return kasa.update_device_state(data['name'], data['on'])
 
