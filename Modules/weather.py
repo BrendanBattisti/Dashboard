@@ -22,6 +22,7 @@ class WeatherInterface(Loggable):
         self.api_key = api_key
         self.city = city
         self.state = state
+
     def get_weather_data(self):
         """
         Gets weather data and checks if new data needs to be fetched
