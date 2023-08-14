@@ -99,5 +99,5 @@ class FileLogger(Logger):
         self.path = file_path
 
     def log(self, msg):
-        with open(self.path, 'w') as log_file:
-            log_file.write(msg)
+        with open(self.path, 'a') as log_file:
+            log_file.write(msg + "\n")
