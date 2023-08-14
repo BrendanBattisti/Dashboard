@@ -7,13 +7,14 @@ body {
 }
 
 .vertical_flex {
-  height: 100vh;
+  height: 95vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .horizontal_flex {
+  width: 95vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

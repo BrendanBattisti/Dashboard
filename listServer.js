@@ -33,7 +33,6 @@ async function addItem(item) {
   let any_item = any.createItem({ name: item });
 
   any_item = await list.addItem(any_item);
-  console.log(any_item);
   await any_item.save();
   return list.items.map(getName);
 }

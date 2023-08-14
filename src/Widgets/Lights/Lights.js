@@ -5,17 +5,15 @@ import styles from "./lights.module.css";
 import { Switch, TextField, Button } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
-
-
 // Widget for monitoring and controlling the smart lights in the house
 export default function Lights() {
-  const [lightsData, setLights] = useState([]);
+  const [data, setData] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios("api/lights");
-      setLights(response.data);
+      setData(response.data);
     };
 
     const interval = setInterval(() => {
@@ -29,29 +27,11 @@ export default function Lights() {
 
     const response = await axios.put("api/lights", payload);
 
-    setLights(response.data);
+    setData(response.data);
   }
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  function Control() {
-    return (
-      <div className={styles.controlBlock} >
-        <input
-          id="search"
-          label="Search"
-          key="searchbar"
-          onChange={(event) => setFilter(event.target.value)}
-        />
-        <div className={styles.buttonContainer}>
-          <Button variant="contained" className="material-symbols-outlined">
-            refresh
-          </Button>
-        </div>
-      </div>
-    );
   }
 
   function LightSwitch(data) {
@@ -66,8 +46,8 @@ export default function Lights() {
     );
   }
 
-  function LightsList(data) {
-    return (
+  return (
+    <div className={styles.lights}>
       <div className={styles.lights_list}>
         {data
           .filter((element) => {
@@ -80,15 +60,20 @@ export default function Lights() {
             }
           })
           .map(LightSwitch)}
-        
       </div>
-    );
-  }
-
-  return (
-    <div className={styles.lights}>
-      <div>{LightsList(lightsData)}</div>
-      <Control />
+      <div className={styles.controlBlock}>
+        <input
+          id="search"
+          label="Search"
+          key="searchbar"
+          onChange={(event) => setFilter(event.target.value)}
+        />
+        <div className={styles.buttonContainer}>
+          <Button variant="contained" className="material-symbols-outlined">
+            refresh
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

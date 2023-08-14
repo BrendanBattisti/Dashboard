@@ -1,11 +1,3 @@
-.weather {
-  top: 5%;
-  right: 5%;
-  width: 40vh;
-  min-width:fit-content;
-  text-align: center;
-}
-
 .chunk {
   width: 100%;
   border: 2px solid rgba(0, 238, 255, 0.5);
@@ -39,7 +31,7 @@
 .hourly {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly
+  justify-content: space-evenly;
 }
 
 .hour {
