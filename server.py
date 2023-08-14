@@ -12,7 +12,7 @@ from Modules.reddit import RedditInterface
 from Modules.shopping import get_shopping_list, remove_from_list, add_to_list
 from Modules.storage import FileStorage
 from Modules.utils import load_config, PrintLogger
-from Modules.weather import get_weather_data
+from Modules.weather import WeatherInterface
 from env import PORT
 
 app = Flask(__name__)
@@ -30,6 +30,8 @@ reddit_interface = RedditInterface({
     "user_agent": config.reddit_user_agent
 }, storage, logger)
 
+weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
+
 
 def runListServer():
     subprocess.Popen(['node', r'listServer.js'])
@@ -37,7 +39,7 @@ def runListServer():
 
 @app.route('/api/weather')
 def weather():
-    return get_weather_data()
+    return weather_interface.get_weather_data()
 
 
 @app.route('/api/shopping', methods=['GET', 'POST'])
