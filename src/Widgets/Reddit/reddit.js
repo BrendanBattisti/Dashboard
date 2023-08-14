@@ -19,8 +19,7 @@ export default function Reddit() {
           console.log(error.response.status);
         });
     };
-
-    const interval = setInterval(() => {
+    setInterval(() => {
       fetchData();
     }, 1000 * 60 * 60 * 24); // Refreshes reddit threads
     fetchData();

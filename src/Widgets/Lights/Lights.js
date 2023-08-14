@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import styles from "./lights.module.css";
-import { Switch, Button } from "@mui/material";
+import { Switch } from "@mui/material";
 
 // Widget for monitoring and controlling the smart lights in the house
 export default function Lights() {
