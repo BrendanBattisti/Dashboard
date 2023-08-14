@@ -11,7 +11,6 @@ export default function Lights() {
 
   useEffect(() => {
     const fetchData = async () => {
-
       await axios("api/lights")
         .then((data) => {
           setData(data.data);
@@ -40,8 +39,6 @@ export default function Lights() {
 
   async function ToggleLight(name, current_state) {
     const payload = { name: name, on: !current_state };
-
-    
 
     await axios
       .put("api/lights", payload)
@@ -72,7 +69,7 @@ export default function Lights() {
     );
   }
 
-  const old = (
+  const content = (
     <div className={styles.container}>
       <div className={styles.itemContainer}>
         {data
@@ -99,6 +96,7 @@ export default function Lights() {
         <button
           variant="contained"
           className="material-symbols-outlined"
+          onClick={() => refreshLight()}
           style={{
             transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
           }}
@@ -114,7 +112,5 @@ export default function Lights() {
       </div>
     </div>
   );
-  return old;
-  
-
+  return data.length != 0 ? content : null;
 }
