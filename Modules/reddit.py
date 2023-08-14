@@ -1,14 +1,9 @@
 import dataclasses
-import datetime
-import json
-import random
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
-import praw as praw
-
-from Modules.utils import get_datetime_int, debug_msg
-from env import REDDIT_USER, SUBREDDITS_FILE, THREADS_FILE
+from Modules.storage import Storage
+from Modules.utils import Loggable, Logger, annotate
 
 
 @dataclass
@@ -29,90 +24,87 @@ class Thread:
     subreddit_img: str
 
 
-def login_user(user: User) -> praw.Reddit:
-    """
-    Logs in a user and returns a Reddit instance.
+class RedditInterface(Loggable):
 
-    Parameters:
-    - user: An instance of the User class with the fields populated with the login credentials.
+    def __init__(self, user: Union[User, dict], storage: Storage, logger: Logger):
+        super().__init__(logger)
 
-    Returns:
-    - A Reddit instance that is logged in with the provided login credentials.
-    """
-    reddit = praw.Reddit(
-        client_id=user.client_id,
-        client_secret=user.secret,
-        password=user.password,
-        user_agent=user.user_agent,
-        username=user.username,
-    )
-    reddit.read_only = True
+        if user is None:
+            self.active = False
 
-    return reddit
+        try:
+            import praw
+            self.praw = praw
+            self.active = True
+        except ImportError:
+            self.active = False
 
+        self.reddit = self.login_user(user)
+        self.storage = storage
 
-def get_top_threads(limit: int = 5):
-    debug_msg("Getting top threads")
-    reddit = login_user(User(**REDDIT_USER))
+    def login_user(self, user: Union[dict, User]) -> 'praw.Reddit':
+        """
+        Logs in a user and returns a Reddit instance.
 
-    subreddits = get_subreddits()
+        Parameters:
+        - user: An instance of the User class with the fields populated with the login credentials.
 
-    index = 0
-    threads = [None] * len(subreddits) * limit
+        Returns:
+        - A Reddit instance that is logged in with the provided login credentials.
+        """
+        if type(user) == dict:
+            user = User(**user)
 
-    for sub in subreddits:
-        subreddit = reddit.subreddit(sub)
+        reddit = self.praw.Reddit(
+            client_id=user.client_id,
+            client_secret=user.secret,
+            password=user.password,
+            user_agent=user.user_agent,
+            username=user.username,
+        )
+        reddit.read_only = True
 
-        # Scrape the threads
-        for thread in subreddit.hot(limit=limit):
-            if thread.stickied:
-                continue
+        return reddit
 
-            new_thread = Thread(title=thread.title,
-                                upvotes=thread.ups,
-                                comments=thread.num_comments,
-                                link=f"https://www.reddit.com/{thread.permalink}",
-                                subreddit_img=subreddit.icon_img)
-            threads[index] = new_thread
-            index += 1
-    return {"dt": get_datetime_int(), "threads": [dataclasses.asdict(x) for x in threads if x is not None]}
+    @annotate
+    def get_top_threads(self, subreddits: List[str], limit: int = 5):
+        self.log("Getting top threads")
 
+        index = 0
+        threads = [None] * len(subreddits) * limit
 
-def save_threads(filename: str, threads) -> None:
-    with open(filename, 'w') as json_file:
-        json.dump(threads, json_file, indent=2)
+        for sub in subreddits:
+            subreddit = self.reddit.subreddit(sub)
 
+            # Scrape the threads
+            for thread in subreddit.hot(limit=limit):
+                if thread.stickied:
+                    continue
 
-def load_threads(filename: str):
-    debug_msg("Loading Threads")
-    try:
-        with open(filename) as json_file:
-            obj = json.load(json_file)
+                new_thread = Thread(title=thread.title,
+                                    upvotes=thread.ups,
+                                    comments=thread.num_comments,
+                                    link=f"https://www.reddit.com/{thread.permalink}",
+                                    subreddit_img=subreddit.icon_img)
+                threads[index] = new_thread
+                index += 1
+        return [dataclasses.asdict(x) for x in threads if x is not None]
 
-        return obj
-    except FileNotFoundError:
-        return {}
+    def save_threads(self, threads) -> None:
+        self.storage.save_reddit(threads)
 
+    @annotate
+    def get_threads(self):
+        self.log("Loading Threads")
+        data = self.storage.get_reddit()
+        if data['refresh']:
 
-def get_subreddits() -> List[str]:
-    return ['technology']
+            if 'data' not in data:
+                data['data'] = {'threads': [], "subreddits": []}
 
+            if 'subreddits' in data['data']:
+                data['data']['threads'] = self.get_top_threads(data['data']['subreddits'])
 
-def top_threads():
-    threads = load_threads(THREADS_FILE)
+            self.storage.save_reddit(data['data'])
+        return data['data']['threads']
 
-    if threads:
-
-        time_since_update = datetime.datetime.fromtimestamp(threads['dt']) - datetime.datetime.now()
-        if time_since_update > datetime.timedelta(days=5):
-            threads = get_top_threads()
-
-            save_threads(THREADS_FILE, threads)
-
-    else:
-        threads = get_top_threads()
-        save_threads(THREADS_FILE, threads)
-
-    threads_list = threads['threads']
-    random.shuffle(threads_list)
-    return threads_list

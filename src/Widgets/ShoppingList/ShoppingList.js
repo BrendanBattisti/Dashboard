@@ -20,8 +20,14 @@ export default function ShoppingList() {
   }, []);
 
   const fetchData = async () => {
-    const response = await axios.get("api/shopping");
-    setData(response.data);
+    const response = await axios
+      .get("api/shopping")
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
   };
 
   const handleAddItem = async () => {
@@ -38,7 +44,7 @@ export default function ShoppingList() {
     setData(response.data);
   };
 
-  return (
+  const content = (
     <Container maxWidth="sm">
       <List>
         {data.map((item) => (
@@ -69,4 +75,5 @@ export default function ShoppingList() {
       </Button>
     </Container>
   );
+  return data.length != 0 ? content : null;
 }
