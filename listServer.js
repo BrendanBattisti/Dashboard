@@ -6,11 +6,11 @@ var app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const config = JSON.parse(fs.readFileSync("nodeEnv.json"));
+const config = JSON.parse(fs.readFileSync("config.json"));
 
 const any = new AnyList({
-  email: config.shopping.email,
-  password: config.shopping.password,
+  email: config.shopping_username,
+  password: config.shopping_password,
 });
 
 function getName(item) {
@@ -19,7 +19,7 @@ function getName(item) {
 
 async function updatedList() {
   await any.getLists();
-  return any.getListByName(config.shopping.list);
+  return any.getListByName(config.shopping_list);
 }
 
 async function getList() {
@@ -88,7 +88,7 @@ const listMembers = async (circle) => {
 any.login().then(async () => {
   await any.getLists();
 
-  var server = app.listen(config.server.port, function () {
+  var server = app.listen(config.node_port, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log("Example app listening at http://%s:%s", host, port);

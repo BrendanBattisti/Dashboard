@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import Title from "./Title/title";
 import Clock from "./Widgets/Clock/Clock";
 import Weather from "./Widgets/Weather/Weather";
 import Life360 from "./Widgets/Life360/Life360";
@@ -36,6 +35,7 @@ root.render(
         <Reddit />
         <Life360 />
       </div>
+
     </div>
     s
   </React.StrictMode>
