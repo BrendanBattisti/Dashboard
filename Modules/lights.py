@@ -1,135 +1,137 @@
 """
 Server module for controlling lights in the house
 """
-from datetime import datetime, timedelta
-from typing import Dict
-
-import kasa.smartdevice
-from kasa import SmartPlug, Discover
 import asyncio
-import json
+import dataclasses
+from dataclasses import dataclass
+from typing import List
 
-from Modules.utils import get_datetime_int, debug_msg
-from env import LIGHTS_FILE
-
-#asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-
-def save_lights(data):
-    with open(LIGHTS_FILE, 'w') as json_file:
-        json.dump(data, json_file, indent=2)
+from Modules.storage import Storage
+from Modules.utils import Logger, annotate, Loggable
 
 
-def load_lights():
-    try:
-        with open(LIGHTS_FILE) as json_file:
-            return json.load(json_file)
+@dataclass
+class Light:
+    ip: str
+    on: bool
+    name: str
 
-    except FileNotFoundError:
-        return {}
-
-
-def update_lights():
-    debug_msg("Updating Lights")
-    discovered_devices = asyncio.run(Discover.discover(target="10.0.1.255"))
-
-    devices = json_storage_format(format_lights(discovered_devices))
-
-    save_lights(devices)
-
-    return devices
+    def to_public(self):
+        return PublicLight(self)
 
 
-def send_update_lights():
-    return format_for_sending(update_lights())
+def from_kasa(ip: str, device) -> Light:
+    return Light(
+        ip=ip,
+        on=device.is_on,
+        name=device.alias
+    )
 
 
-def get_lights():
-    return format_for_sending(refresh_lights())
+@dataclass
+class PublicLight:
+    on: bool
+    name: str
+
+    def __init__(self, light: Light):
+        self.on = light.on
+        self.name = light.name
 
 
-def format_for_sending(devices: dict) -> list:
-    return [{"name": x['name'], "on": x['on']} for x in devices['devices']]
+class KasaInterface(Loggable):
+
+    def __init__(self, storage: Storage, logger: Logger) -> None:
+
+        super().__init__(logger)
+        self.data = {}
+        try:
+            import kasa.smartdevice
+            from kasa import SmartPlug, Discover
+            self.kasa = kasa
+            self.SmartPlug = SmartPlug
+            self.Discover = Discover
+        except ImportError:
+            self.active = False
+        else:
+            self.active = True
+
+        self.storage = storage
+        self.load_lights()
+
+    def load_lights(self) -> None:
+
+        data = self.storage.get_lights()
+
+        if data['refresh']:
+            self.update_lights()
+        else:
+            self.data = {ip: Light(**values) for ip, values in data['data'].items()}
+
+    def data_to_public_json(self) -> List[PublicLight]:
+        return [device.to_public() for device in self.data.values()]
+
+    def storage_format(self) -> dict:
+        return {k: dataclasses.asdict(v) for k, v in self.data.items()}
+
+    def save_lights(self) -> None:
+        self.storage.save_lights(self.storage_format())
+
+    def update_lights(self) -> None:
+        if self.active:
+            self.log("Updating Lights")
+            discovered_devices = asyncio.run(self.Discover.discover(target="10.0.1.255"))
+            self.data = {ip: from_kasa(ip, device) for ip, device in discovered_devices.items()}
+            self.save_lights()
+
+    def refresh_lights(self) -> List[PublicLight]:
+        if self.active:
+            self.log("Refreshing Lights")
+            self.update_lights()
+            return self.data_to_public_json()
+
+    def get_lights(self) -> List[PublicLight]:
+        self.load_lights()
+        return self.data_to_public_json()
+
+    @annotate
+    def update_device_state(self, name: str, new_state: bool):
+
+        if self.active:
+            light = None
+            device_ip = None
+            for ip, device in self.data.items():
+                if device.name == name:
+                    light = device
+                    device_ip = ip
+                    break
+
+            if not light:
+                return self.data_to_public_json()
+
+            if light.on == new_state:
+                return self.data_to_public_json()
+
+            self.log(f"Changing {name} to {new_state}")
+
+            # Actually change the state of the device
+            real_device = self.SmartPlug(light.ip)
+            try:
+                asyncio.run(kasa_new_state(real_device, new_state))
+
+            except self.kasa.SmartDeviceException:
+                return self.data_to_public_json()
+            #  Change the state of the stored device
+            light.on = new_state
+            self.data[device_ip] = light
+            self.save_lights()
+
+        return self.data_to_public_json()
 
 
-def refresh_lights():
-    debug_msg("Refreshing lights")
-    devices = load_lights()
-
-    if not devices:
-        devices = update_lights()
-
-    else:
-
-        time_since_update = datetime.fromtimestamp(devices['dt']) - datetime.now()
-
-        if time_since_update > timedelta(days=1):
-            new_devices = update_lights()
-
-            if len(new_devices) < len(devices):
-                return devices
-
-            devices = new_devices
-
-    return devices
-
-
-def json_storage_format(light_data: list) -> dict:
-    return {'dt': get_datetime_int(), 'devices': light_data}
-
-
-def format_lights(lights_data: Dict[str, kasa.smartdevice.SmartDevice]) -> list:
-    formatted_lights = [None] * len(lights_data)
-
-    for i, (k, v) in enumerate(lights_data.items()):
-        new_item = {
-            'ip': k,
-            'on': v.is_on,
-            'name': v.alias
-        }
-
-        formatted_lights[i] = new_item
-    return formatted_lights
-
-
-async def kasa_new_state(device: SmartPlug, new_state: bool):
+async def kasa_new_state(device, new_state: bool) -> None:
     await device.update()
 
     if new_state:
         await (device.turn_on())
     else:
         await (device.turn_off())
-
-
-def update_device_state(name: str, new_state: bool):
-    devices = refresh_lights()['devices']
-
-    selected = None
-    selected_index = 0
-    for index, device in enumerate(devices):
-        if device['name'] == name:
-            selected = device
-            selected_index = index
-            break
-
-    if not selected:
-        format_for_sending({'devices': devices})
-
-    if selected['on'] == new_state:
-        format_for_sending({'devices': devices})
-
-    debug_msg(f"Changing {name} to {new_state}")
-
-    # Actually change the state of the device
-    real_device = SmartPlug(selected['ip'])
-    try:
-        asyncio.run(kasa_new_state(real_device, new_state))
-
-    except kasa.SmartDeviceException:
-        return format_for_sending({'devices': devices})
-    #  Change the state of the stored device
-    selected['on'] = new_state
-    devices[selected_index] = selected
-    save_lights(json_storage_format(devices))
-
-    return format_for_sending({'devices': devices})

@@ -9,36 +9,36 @@ export default function Reddit() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios("api/reddit");
-      setData(response.data);
+      await axios("api/reddit")
+        .then((data) => {
+          if (data.data) {
+            setData(data.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error.response.status);
+        });
     };
 
     const interval = setInterval(() => {
       fetchData();
     }, 1000 * 60 * 60 * 24); // Refreshes reddit threads
     fetchData();
-
-    
-
   }, []);
 
   function switchThread(new_state) {
     if (new_state >= 0 && new_state < data.length) {
       setActive(new_state);
-    }
-    else if (new_state < 0) {
-      setActive(data.length - 1)
+    } else if (new_state < 0) {
+      setActive(data.length - 1);
     } else if (new_state >= data.length) {
-      setActive(0)
+      setActive(0);
     }
   }
 
   function Thread(thread, index) {
     return (
-      <div
-        className={index === active ? null : styles.hidden}
-        
-      >
+      <div className={index === active ? null : styles.hidden}>
         <div onClick={() => window.open(thread.link, "_blank")}>
           <div className={styles.row}>
             <img className={styles.subRedditImage} src={thread.subreddit_img} />
@@ -52,11 +52,10 @@ export default function Reddit() {
         <div>
           <button onClick={() => switchThread(index - 1)}></button>
           <button onClick={() => switchThread(index + 1)}></button>
-
         </div>
       </div>
     );
   }
-
-  return <div className={styles.container}>{data.map(Thread)}</div>;
+  const content = <div className={styles.container}>{data.map(Thread)}</div>;
+  return data.length === 0 ? null : content;
 }

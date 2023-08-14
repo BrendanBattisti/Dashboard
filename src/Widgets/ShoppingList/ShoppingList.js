@@ -11,8 +11,14 @@ export default function ShoppingList() {
   }, []);
 
   const fetchData = async () => {
-    const response = await axios.get("api/shopping");
-    setData(response.data);
+    const response = await axios
+      .get("api/shopping")
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
   };
 
   const handleAddItem = async () => {
@@ -30,61 +36,17 @@ export default function ShoppingList() {
     setData(response.data);
   };
 
-  return (
-    <div
-      ref={containerRef}
-      style={{
-        position: "relative",
-        background: "rgba(0, 255, 255, 0.05)", // More transparent background
-        width: "300px",
-        height: "300px",
-        overflowY: "hidden", // Hide the default scrollbar
-        borderRadius: "5px",
-        border: "1px solid rgba(0, 255, 255, 0.6)", // Thicker main border
-      }}
-    >
-      <div>
-        {data.map((item, index) => (
-          <div
-            key={index}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "10px",
-              color: "rgba(0, 255, 255, 0.8)", // Brighter cyan text color
-              fontFamily: "Arial, sans-serif",
-              fontWeight: "300",
-              textShadow: "0 0 2px rgba(0, 255, 255, 0.8)", // Faint glow for text
-              background:
-                index % 2 === 0
-                  ? "rgba(0, 255, 255, 0.02)"
-                  : "rgba(0, 255, 255, 0)", // Alternating background colors
-            }}
-          >
-            <span style={{ flexGrow: 1 }}>{item}</span>
-            <button
-              style={{
-                border: "none",
-                background: "transparent",
-                color: "rgba(0, 255, 255, 0.8)", // Brighter cyan delete icon color
-                cursor: "pointer",
-                fontSize: "18px",
-                margin: "0 5px",
-              }}
-              onClick={() => handleDeleteItem(item)}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.textShadow =
-                    "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
-                }}
+  const content = (
+    <Container maxWidth="sm">
+      <List>
+        {data.map((item) => (
+          <ListItem>
+            <ListItemText primary={item} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDeleteItem(item)}
               >
                 delete
               </span>
@@ -153,4 +115,5 @@ export default function ShoppingList() {
       </div>
     </div>
   );
+  return data.length != 0 ? content : null;
 }
