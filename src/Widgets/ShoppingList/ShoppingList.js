@@ -97,5 +97,5 @@ export default function ShoppingList() {
       </div>
     </div>
   );
-  return data.length != 0 ? content : null;
+  return content;
 }
