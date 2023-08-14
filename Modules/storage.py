@@ -22,6 +22,9 @@ class Storage(Loggable, metaclass=ABCMeta):
         if name not in self.data:
             return {'refresh': True}
 
+        if not self.data[name]['data']:
+            return {'refresh': True}
+
         last_refresh = self.data[name]['refresh_time']
         refresh_datetime = datetime.datetime.strptime(last_refresh, "%H: %M %d/%m/%Y")
         refresh = (datetime.datetime.now() - refresh_datetime) > datetime.timedelta(days=1)
