@@ -6,7 +6,6 @@
 /.idea/
 /__pycache__/
 /Modules/__pycache__/
-light_data.json
-threads.json
-/nodeEnv.json
 /__pycache__/
+*.json
+log.txt

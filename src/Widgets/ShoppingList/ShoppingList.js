@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-
+import styles from "./ShoppingList.module.css";
 export default function ShoppingList() {
   const [data, setData] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -30,17 +30,17 @@ export default function ShoppingList() {
     setData(response.data);
   };
 
-  return (
+  const old = (
     <div
       ref={containerRef}
       style={{
         position: "relative",
-        background: "rgba(0, 255, 255, 0.05)", // More transparent background
+        background: "rgba(0, 255, 255, 0.05)",
         width: "300px",
         height: "300px",
-        overflowY: "hidden", // Hide the default scrollbar
+        overflowY: "auto", // Change this to "auto" or "scroll"
         borderRadius: "5px",
-        border: "1px solid rgba(0, 255, 255, 0.6)", // Thicker main border
+        border: "1px solid rgba(0, 255, 255, 0.6)",
       }}
     >
       <div>
@@ -134,6 +134,67 @@ export default function ShoppingList() {
             alignItems: "center",
           }}
         >
+          <span
+            className="material-symbols-outlined"
+            style={{
+              transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textShadow =
+                "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
+            }}
+          >
+            add
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.itemContainer}>
+        {data.map((item, index) => (
+          <div
+            key={index}
+            className={index % 2 == 0 ? styles.darkitem : styles.lightitem}
+          >
+            {item}
+            <button
+              className={styles.deleteButton}
+              onClick={() => handleDeleteItem(item)}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.textShadow =
+                    "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
+                }}
+              >
+                delete
+              </span>
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className={styles.controlInput}>
+        <input
+          type="text"
+          placeholder="Enter new item"
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+          className={styles.itemInput}
+        ></input>
+        <button onClick={handleAddItem}>
           <span
             className="material-symbols-outlined"
             style={{
