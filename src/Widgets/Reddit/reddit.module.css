@@ -9,12 +9,17 @@
   padding: 1vh;
   width: 25%;
   min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 20vh;
+  width: 20vw;
 }
 
 .subRedditImage {
-    border-radius: 50%;
-    height: 10%;
-    width: 10%;
+  border-radius: 50%;
+  height: 10%;
+  width: 10%;
 }
 
 .numbers_row {
@@ -26,5 +31,17 @@
 .row {
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
   min-width: fit-content;
+}
+
+.title {
+  cursor: pointer;
+}
+
+.container button {
+  background: transparent;
+  border: none;
+  color: rgba(0, 255, 255, 0.8);
+  cursor: pointer;
 }

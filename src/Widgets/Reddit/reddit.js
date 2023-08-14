@@ -38,24 +38,59 @@ export default function Reddit() {
 
   function Thread(thread, index) {
     return (
-      <div className={index === active ? null : styles.hidden}>
-        <div onClick={() => window.open(thread.link, "_blank")}>
-          <div className={styles.row}>
-            <img className={styles.subRedditImage} src={thread.subreddit_img} />
-            <div>{thread.title}</div>
-          </div>
-          <div className={styles.numbers_row}>
-            <div>{thread.upvotes}</div>
-            <div>{thread.comments}</div>
+      <div className={index === active ? styles.container : styles.hidden}>
+        <div className={styles.row}>
+          <img className={styles.subRedditImage} src={thread.subreddit_img} />
+          <div
+            onClick={() => window.open(thread.link, "_blank")}
+            className={styles.title}
+          >
+            {thread.title}
           </div>
         </div>
-        <div>
-          <button onClick={() => switchThread(index - 1)}></button>
-          <button onClick={() => switchThread(index + 1)}></button>
+        <div className={styles.numbers_row}>
+          <button
+            onClick={() => switchThread(index - 1)}
+            style={{
+              transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textShadow =
+                "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
+            }}
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+          </button>
+          <div>
+            <span className="material-symbols-outlined">thumb_up</span>
+            {thread.upvotes}
+          </div>
+          <div>
+            <span className="material-symbols-outlined">comment</span>
+            {thread.comments}
+          </div>
+          <button
+            onClick={() => switchThread(index + 1)}
+            style={{
+              transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.textShadow =
+                "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
+            }}
+          >
+            <span className="material-symbols-outlined">arrow_forward</span>
+          </button>
         </div>
       </div>
     );
   }
-  const content = <div className={styles.container}>{data.map(Thread)}</div>;
+  const content = <div>{data.map(Thread)}</div>;
   return data.length === 0 ? null : content;
 }
