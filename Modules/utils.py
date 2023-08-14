@@ -1,16 +1,9 @@
-from dataclasses import dataclass
-import datetime
+import dataclasses
+import json
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 from env import DEBUG
-
-
-def get_datetime_int():
-    return int(datetime.datetime.now().strftime('%Y%m%d'))
-
-
-def get_time_difference(time_int: int) -> datetime.timedelta:
-    return datetime.datetime.fromtimestamp(time_int) - datetime.datetime.now()
 
 
 def debug_msg(text: str) -> None:
@@ -19,27 +12,47 @@ def debug_msg(text: str) -> None:
 
 def annotate(f):
     def inner(*args, **kwargs):
-        print(f.__name__)
+        # print(f.__name__)
         result = f(*args, **kwargs)
-        print(type(result))
+        # print(type(result))
         return result
 
     return inner
 
+
 @dataclass
 class Configuration:
-
     # Server
-    port: int
-    debug: bool
+    port: int = 3000
+    debug: bool = False
+
+    # Storage
+    storage_file: str = ""
 
     # Reddit
-    reddit_user: str
-    reddit_password: str
+    reddit_user: str = ""
+    reddit_password: str = ""
+    reddit_secret: str = ""
+    reddit_client_id: str = ""
+    reddit_user_agent: str = ""
 
     # Weather
-    weather_key: str
+    weather_key: str = ""
 
+
+def load_config(filename: str) -> Configuration:
+    try:
+        with open(filename) as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        print("Config File not found")
+        data = {}
+
+    config = Configuration(**data)
+    with open(filename, 'w') as file:
+        json.dump(dataclasses.asdict(config), file, indent=2)
+
+    return config
 
 
 class Loggable:
@@ -69,6 +82,7 @@ class PrintLogger(Logger):
     def log(self, msg) -> None:
         print(msg)
 
+
 class BlankLogger(Logger):
 
     def __init__(self) -> None:
@@ -77,6 +91,7 @@ class BlankLogger(Logger):
     def log(self, msg) -> None:
         pass
 
+
 class FileLogger(Logger):
 
     def __init__(self, file_path: str) -> None:
@@ -84,6 +99,5 @@ class FileLogger(Logger):
         self.path = file_path
 
     def log(self, msg):
-
         with open(self.path, 'w') as log_file:
             log_file.write(msg)

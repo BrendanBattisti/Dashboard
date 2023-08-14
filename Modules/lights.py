@@ -3,13 +3,11 @@ Server module for controlling lights in the house
 """
 import asyncio
 import dataclasses
-import json
 from dataclasses import dataclass
-from datetime import timedelta
 from typing import List
-from Modules.storage import Storage
 
-from Modules.utils import Logger, annotate, get_datetime_int, Loggable, get_time_difference
+from Modules.storage import Storage
+from Modules.utils import Logger, annotate, Loggable
 
 
 @dataclass
@@ -45,6 +43,7 @@ class KasaInterface(Loggable):
     def __init__(self, storage: Storage, logger: Logger) -> None:
 
         super().__init__(logger)
+        self.data = {}
         try:
             import kasa.smartdevice
             from kasa import SmartPlug, Discover
@@ -57,48 +56,35 @@ class KasaInterface(Loggable):
             self.active = True
 
         self.storage = storage
-        self.recent_update = 0
+        self.load_lights()
 
     def load_lights(self) -> None:
-        
+
         data = self.storage.get_lights()
-        self.data = {k: Light(**v) for k, v in data['devices'].items()}
+
+        if data['refresh']:
+            self.update_lights()
+        else:
+            self.data = {ip: Light(**values) for ip, values in data['data'].items()}
 
     def data_to_public_json(self) -> List[PublicLight]:
         return [device.to_public() for device in self.data.values()]
 
     def storage_format(self) -> dict:
-        return {'dt': self.recent_update, 'devices': {k: dataclasses.asdict(v) for k, v in self.data.items()}}
+        return {k: dataclasses.asdict(v) for k, v in self.data.items()}
 
-    def update_lights(self) -> List[PublicLight]:
+    def save_lights(self) -> None:
+        self.storage.save_lights(self.storage_format())
+
+    def update_lights(self) -> None:
         if self.active:
             self.log("Updating Lights")
             discovered_devices = asyncio.run(self.Discover.discover(target="10.0.1.255"))
-            self.recent_update = get_datetime_int()
             self.data = {ip: from_kasa(ip, device) for ip, device in discovered_devices.items()}
-            self.storage.save_lights(self.data)
-        return self.data_to_public_json()
+            self.save_lights()
 
     def get_lights(self) -> List[PublicLight]:
-        self.refresh_lights()
-        return self.data_to_public_json()
-
-    @annotate
-    def refresh_lights(self) -> List[PublicLight]:
-        self.log("Refreshing lights")
         self.load_lights()
-
-        if not self.data:
-            self.update_lights()
-
-        else:
-
-            print(self.recent_update)
-            time_since_update = get_time_difference(get_datetime_int())
-
-            if time_since_update > timedelta(days=1):
-                self.update_lights()
-
         return self.data_to_public_json()
 
     @annotate

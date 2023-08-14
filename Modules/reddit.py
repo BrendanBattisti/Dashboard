@@ -1,12 +1,9 @@
 import dataclasses
-import datetime
-import json
-import random
 from dataclasses import dataclass
 from typing import List, Union
 
-from Modules.utils import Loggable, Logger, annotate, get_datetime_int
-
+from Modules.storage import Storage
+from Modules.utils import Loggable, Logger, annotate
 
 
 @dataclass
@@ -26,9 +23,10 @@ class Thread:
     link: str
     subreddit_img: str
 
+
 class RedditInterface(Loggable):
 
-    def __init__(self, user: Union[User, dict], file: str, subreddits: List[str], logger: Logger):
+    def __init__(self, user: Union[User, dict], storage: Storage, logger: Logger):
         super().__init__(logger)
 
         if user is None:
@@ -42,8 +40,7 @@ class RedditInterface(Loggable):
             self.active = False
 
         self.reddit = self.login_user(user)
-        self.file = file
-        self.subreddits = subreddits
+        self.storage = storage
 
     def login_user(self, user: Union[dict, User]) -> 'praw.Reddit':
         """
@@ -70,15 +67,13 @@ class RedditInterface(Loggable):
         return reddit
 
     @annotate
-    def get_top_threads(self, limit: int = 5):
+    def get_top_threads(self, subreddits: List[str], limit: int = 5):
         self.log("Getting top threads")
-        
-
 
         index = 0
-        threads = [None] * len(self.subreddits) * limit
+        threads = [None] * len(subreddits) * limit
 
-        for sub in self.subreddits:
+        for sub in subreddits:
             subreddit = self.reddit.subreddit(sub)
 
             # Scrape the threads
@@ -93,41 +88,23 @@ class RedditInterface(Loggable):
                                     subreddit_img=subreddit.icon_img)
                 threads[index] = new_thread
                 index += 1
-        return {"dt": get_datetime_int(), "threads": [dataclasses.asdict(x) for x in threads if x is not None]}
+        return [dataclasses.asdict(x) for x in threads if x is not None]
 
     def save_threads(self, threads) -> None:
-        with open(self.file, 'w') as json_file:
-            json.dump(threads, json_file, indent=2)
+        self.storage.save_reddit(threads)
 
     @annotate
-    def load_threads(self):
+    def get_threads(self):
         self.log("Loading Threads")
-        try:
-            with open(self.file) as json_file:
-                obj = json.load(json_file)
+        data = self.storage.get_reddit()
+        if data['refresh']:
 
-            return obj
-        except FileNotFoundError:
-            return {}
+            if 'data' not in data:
+                data['data'] = {'threads': [], "subreddits": []}
 
+            if 'subreddits' in data['data']:
+                data['data']['threads'] = self.get_top_threads(data['data']['subreddits'])
 
+            self.storage.save_reddit(data['data'])
+        return data['data']['threads']
 
-    @annotate
-    def top_threads(self):
-        threads = self.load_threads()
-
-        if threads:
-
-            time_since_update = datetime.datetime.fromtimestamp(threads['dt']) - datetime.datetime.now()
-            if time_since_update > datetime.timedelta(days=5):
-                threads = self.get_top_threads()
-
-                self.save_threads(threads)
-
-        else:
-            threads = self.get_top_threads()
-            self.save_threads(threads)
-
-        threads_list = threads['threads']
-        random.shuffle(threads_list)
-        return threads_list

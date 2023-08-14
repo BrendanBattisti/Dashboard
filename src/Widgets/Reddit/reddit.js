@@ -11,7 +11,9 @@ export default function Reddit() {
     const fetchData = async () => {
       await axios("api/reddit")
         .then((data) => {
-          setData(data.data);
+          if (data.data) {
+            setData(data.data);
+          }
         })
         .catch((error) => {
           console.log(error.response.status);
@@ -54,7 +56,6 @@ export default function Reddit() {
       </div>
     );
   }
-
   const content = <div className={styles.container}>{data.map(Thread)}</div>;
-  return data.length == 0 ? content : null;
+  return data.length === 0 ? null : content;
 }
