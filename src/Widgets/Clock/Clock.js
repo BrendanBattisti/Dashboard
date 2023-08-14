@@ -3,7 +3,7 @@ import styles from "./clock.module.css";
 export default function Clock() {
   const [time, setDate] = useState(new Date());
   useEffect(() => {
-    const timerId = setInterval(checkTime, 1000);
+    setInterval(checkTime, 1000);
   }, []);
   function formatTime(x) {
     if (x < 10) {

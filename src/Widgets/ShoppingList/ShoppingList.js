@@ -11,8 +11,14 @@ export default function ShoppingList() {
   }, []);
 
   const fetchData = async () => {
-    const response = await axios.get("api/shopping");
-    setData(response.data);
+    const response = await axios
+      .get("api/shopping")
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
   };
 
   const handleAddItem = async () => {
@@ -30,31 +36,18 @@ export default function ShoppingList() {
     setData(response.data);
   };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.itemContainer}>
-        {data.map((item, index) => (
-          <div
-            key={index}
-            className={index % 2 == 0 ? styles.darkitem : styles.lightitem}
-          >
-            {item}
-            <button
-              className={styles.deleteButton}
-              onClick={() => handleDeleteItem(item)}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{
-                  transition: "text-shadow 0.3s ease-in-out", // Apply transition to the text-shadow property
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.textShadow =
-                    "0 0 6px rgba(0, 255, 255, 0.8)"; // Faint glow on hover
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.textShadow = "none"; // Remove the glow when not hovering
-                }}
+
+  const content = (
+    <Container maxWidth="sm">
+      <List>
+        {data.map((item) => (
+          <ListItem>
+            <ListItemText primary={item} />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDeleteItem(item)}
               >
                 delete
               </span>
@@ -90,4 +83,5 @@ export default function ShoppingList() {
       </div>
     </div>
   );
+  return data.length != 0 ? content : null;
 }
