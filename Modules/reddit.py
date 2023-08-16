@@ -54,17 +54,17 @@ class RedditInterface(Loggable):
         """
         if type(user) == dict:
             user = User(**user)
+        if self.active:
+            reddit = self.praw.Reddit(
+                client_id=user.client_id,
+                client_secret=user.secret,
+                password=user.password,
+                user_agent=user.user_agent,
+                username=user.username,
+            )
+            reddit.read_only = True
 
-        reddit = self.praw.Reddit(
-            client_id=user.client_id,
-            client_secret=user.secret,
-            password=user.password,
-            user_agent=user.user_agent,
-            username=user.username,
-        )
-        reddit.read_only = True
-
-        return reddit
+            return reddit
 
     @annotate
     def get_top_threads(self, subreddits: List[str], limit: int = 5):
@@ -72,23 +72,23 @@ class RedditInterface(Loggable):
 
         index = 0
         threads = [None] * len(subreddits) * limit
+        if self.active:
+            for sub in subreddits:
+                subreddit = self.reddit.subreddit(sub)
 
-        for sub in subreddits:
-            subreddit = self.reddit.subreddit(sub)
+                # Scrape the threads
+                for thread in subreddit.hot(limit=limit):
+                    if thread.stickied:
+                        continue
 
-            # Scrape the threads
-            for thread in subreddit.hot(limit=limit):
-                if thread.stickied:
-                    continue
-
-                new_thread = Thread(title=thread.title,
-                                    upvotes=thread.ups,
-                                    comments=thread.num_comments,
-                                    link=f"https://www.reddit.com/{thread.permalink}",
-                                    subreddit_img=subreddit.icon_img)
-                threads[index] = new_thread
-                index += 1
-        return [dataclasses.asdict(x) for x in threads if x is not None]
+                    new_thread = Thread(title=thread.title,
+                                        upvotes=thread.ups,
+                                        comments=thread.num_comments,
+                                        link=f"https://www.reddit.com/{thread.permalink}",
+                                        subreddit_img=subreddit.icon_img)
+                    threads[index] = new_thread
+                    index += 1
+            return [dataclasses.asdict(x) for x in threads if x is not None]
 
     def save_threads(self, threads) -> None:
         self.storage.save_reddit(threads)

@@ -35,9 +35,7 @@ root.render(
         <Reddit />
         <Life360 />
       </div>
-
     </div>
-    s
   </React.StrictMode>
 );
 
