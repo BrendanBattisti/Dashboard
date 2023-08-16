@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./ShoppingList.module.css";
 import capitalizeFirstLetter from "../../Util/utils";
 export default function ShoppingList() {
   const [data, setData] = useState([]);
   const [newItem, setNewItem] = useState("");
-  const containerRef = useRef();
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
-    const response = await axios
+    await axios
       .get("api/shopping")
       .then((data) => {
         setData(data.data);
@@ -25,16 +24,28 @@ export default function ShoppingList() {
   const handleAddItem = async () => {
     if (newItem.trim() !== "") {
       // Assuming the API endpoint supports adding new items
-      const response = await axios.post("api/shopping", { item: newItem });
-      setData(response.data);
-      setNewItem(""); // Clear the newItem state after adding the item
+      await axios
+        .post("api/shopping", { item: newItem })
+        .then((data) => {
+          setData(data.data);
+          setNewItem("");
+        })
+        .catch((error) => {
+          console.log(error.response.status);
+        });
     }
   };
 
   const handleDeleteItem = async (name) => {
     // Assuming the API endpoint supports deleting items by ID
-    const response = await axios.delete(`api/shopping/${name}`);
-    setData(response.data);
+    await axios
+      .delete(`api/shopping/${name}`)
+      .then((data) => {
+        setData(data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.status);
+      });
   };
 
   const content = (
@@ -43,7 +54,7 @@ export default function ShoppingList() {
         {data.map((item, index) => (
           <div
             key={index}
-            className={index % 2 == 0 ? styles.darkitem : styles.lightitem}
+            className={index % 2 === 0 ? styles.darkitem : styles.lightitem}
           >
             {capitalizeFirstLetter(item)}
             <button
