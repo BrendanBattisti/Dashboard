@@ -6,7 +6,11 @@ data for the dashboard
 from abc import ABC, abstractmethod, ABCMeta
 import datetime
 import json
-from Modules.utils import Loggable
+from dataclasses import dataclass
+
+from pydantic import BaseModel
+
+from Modules.utils import Loggable, Logger
 
 
 class Storage(Loggable, metaclass=ABCMeta):
@@ -65,7 +69,7 @@ class Storage(Loggable, metaclass=ABCMeta):
 
     def get_calendar(self):
         self._generic_get('calendar')
-        
+
     def get_calendar(self, data):
         self._generic_save(data, 'calendar')
 
@@ -100,3 +104,46 @@ class FileStorage(Storage, ABC):
                 self.data = json.load(file)
         except FileNotFoundError:
             self.data = {}
+
+
+class Interface(Loggable):
+
+    def __init__(self, storage: Storage, logger: Logger):
+        super().__init__(logger)
+        self.storage = storage
+
+
+"""
+Kasa Lights
+"""
+
+
+class Light(BaseModel):
+    ip: str
+    on: bool
+    name: str
+
+    def to_public(self):
+        return PublicLight(**{'on': self.on, 'name': self.name})
+
+
+class PublicLight(BaseModel):
+    on: bool
+    name: str
+
+
+    def __lt__(self, other: 'Light'):
+        return self.name < other.name
+
+
+"""
+Reddit
+"""
+
+
+class Thread(BaseModel):
+    title: str
+    upvotes: int
+    comments: int
+    link: str
+    subreddit_img: str

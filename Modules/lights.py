@@ -3,24 +3,11 @@ Server module for controlling lights in the house
 """
 import asyncio
 import dataclasses
-from dataclasses import dataclass
-from typing import List
+import json
+from typing import List, Dict
 
-from Modules.storage import Storage
-from Modules.utils import Interface, Logger, annotate, Loggable
-
-
-@dataclass
-class Light:
-    ip: str
-    on: bool
-    name: str
-
-    def to_public(self):
-        return PublicLight(self)
-
-
-
+from Modules.storage import Storage, PublicLight, Light, Interface
+from Modules.utils import  Logger, annotate
 
 
 def from_kasa(ip: str, device) -> Light:
@@ -31,24 +18,12 @@ def from_kasa(ip: str, device) -> Light:
     )
 
 
-@dataclass
-class PublicLight:
-    on: bool
-    name: str
-
-    def __init__(self, light: Light):
-        self.on = light.on
-        self.name = light.name
-
-    def __lt__(self, other: 'Light'):
-        return self.name < other.name
-
 class KasaInterface(Interface):
 
     def __init__(self, storage: Storage, logger: Logger) -> None:
 
         super().__init__(storage, logger)
-        self.data = {}
+        self.data: Dict['str', 'Light'] = {}
         try:
             import kasa.smartdevice
             from kasa import SmartPlug, Discover
@@ -77,7 +52,7 @@ class KasaInterface(Interface):
         return data
 
     def storage_format(self) -> dict:
-        return {k: dataclasses.asdict(v) for k, v in self.data.items()}
+        return {k: json.loads(v.json()) for k, v in self.data.items()}
 
     def save_lights(self) -> None:
         self.storage.save_lights(self.storage_format())

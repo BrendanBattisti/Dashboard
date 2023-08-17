@@ -8,8 +8,8 @@ from typing import Any, Tuple
 
 import requests
 
-from Modules.storage import Storage
-from Modules.utils import Interface, annotate, Loggable, Logger
+from Modules.storage import Storage, Interface
+from Modules.utils import  annotate, Logger
 
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
