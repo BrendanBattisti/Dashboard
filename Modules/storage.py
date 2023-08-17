@@ -68,10 +68,16 @@ class Storage(Loggable, metaclass=ABCMeta):
         self._generic_save(data, 'lights')
 
     def get_calendar(self):
-        self._generic_get('calendar')
+        return self._generic_get('calendar')
 
-    def get_calendar(self, data):
+    def save_calendar(self, data):
         self._generic_save(data, 'calendar')
+
+    def get_google(self):
+        return self._generic_get('google')
+    
+    def save_google(self, data):
+        return self._generic_save(data, 'google')
 
     @abstractmethod
     def save(self) -> None:
@@ -136,6 +142,7 @@ class PublicLight(BaseModel):
         return self.name < other.name
 
 
+
 """
 Reddit
 """
@@ -147,3 +154,16 @@ class Thread(BaseModel):
     comments: int
     link: str
     subreddit_img: str
+
+"""
+Google
+"""
+
+class GoogleCredentials(BaseModel):
+
+    token: str = "" 
+    refresh_token: str = ""
+    token_uri: str = "" 
+    client_id: str = "" 
+    client_secret: str = ""
+    expiry: str = "" 

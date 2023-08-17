@@ -26,10 +26,14 @@ class CalendarConfigData(BaseModel):
     auth_provider_x509_cert_url: str = "" 
     client_secret: str = "" 
     redirect_uris: List[str] = [] 
+
+class CalendarCredentials(BaseModel):
+    web: CalendarConfigData = CalendarConfigData(**{})
   
 
 class CalendarConfig(BaseModel):
-    web: CalendarConfigData = CalendarConfigData(**{})
+    credentials: CalendarCredentials = CalendarCredentials(**{})
+    scopes: List[str] = []
 
 
 class Configuration(BaseModel):

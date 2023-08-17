@@ -1,11 +1,9 @@
-import dataclasses
 import json
-from dataclasses import dataclass
 from typing import List, Union
 
 from Modules.config import RedditUser
 from Modules.storage import Storage, Interface, Thread
-from Modules.utils import  Loggable, Logger, annotate
+from Modules.utils import  Logger, annotate
 
 
 

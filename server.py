@@ -5,6 +5,7 @@ import json
 import subprocess
 
 from flask import Flask, request
+from Modules.calendar import CalendarInterface
 
 from Modules.life360 import get_family_list
 from Modules.lights import KasaInterface
@@ -26,7 +27,7 @@ reddit_interface = RedditInterface(
     config.reddit
 , storage, logger)
 shopping_interface = ShoppingInterface(config.node_port, logger)
-
+calendar_interface = CalendarInterface(config.calendar, storage, logger)
 weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
 
 
@@ -59,6 +60,10 @@ def shopping_delete(item):
 def reddit():
     return reddit_interface.get_threads()
 
+
+@app.route("/api/calendar")
+def calendar():
+    return 
 
 @app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():
