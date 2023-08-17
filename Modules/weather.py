@@ -9,16 +9,15 @@ from typing import Any, Tuple
 import requests
 
 from Modules.storage import Storage
-from Modules.utils import annotate, Loggable, Logger
+from Modules.utils import Interface, annotate, Loggable, Logger
 
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
 
-class WeatherInterface(Loggable):
+class WeatherInterface(Interface):
 
     def __init__(self, city: str, state: str, api_key: str, storage: Storage, logger: Logger):
-        super().__init__(logger)
-        self.storage = storage
+        super().__init__(storage, logger)
         self.api_key = api_key
         self.city = city
         self.state = state

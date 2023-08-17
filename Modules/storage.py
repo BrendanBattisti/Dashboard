@@ -63,6 +63,12 @@ class Storage(Loggable, metaclass=ABCMeta):
     def save_lights(self, data):
         self._generic_save(data, 'lights')
 
+    def get_calendar(self):
+        self._generic_get('calendar')
+        
+    def get_calendar(self, data):
+        self._generic_save(data, 'calendar')
+
     @abstractmethod
     def save(self) -> None:
         self.log("Saving data")

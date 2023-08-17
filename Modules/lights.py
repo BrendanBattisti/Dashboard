@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List
 
 from Modules.storage import Storage
-from Modules.utils import Logger, annotate, Loggable
+from Modules.utils import Interface, Logger, annotate, Loggable
 
 
 @dataclass
@@ -43,11 +43,11 @@ class PublicLight:
     def __lt__(self, other: 'Light'):
         return self.name < other.name
 
-class KasaInterface(Loggable):
+class KasaInterface(Interface):
 
     def __init__(self, storage: Storage, logger: Logger) -> None:
 
-        super().__init__(logger)
+        super().__init__(storage, logger)
         self.data = {}
         try:
             import kasa.smartdevice
@@ -60,7 +60,6 @@ class KasaInterface(Loggable):
         else:
             self.active = True
 
-        self.storage = storage
         self.load_lights()
 
     def load_lights(self) -> None:

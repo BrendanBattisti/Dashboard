@@ -2,7 +2,7 @@ import dataclasses
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
+from storage import Storage
 from env import DEBUG
 
 
@@ -107,3 +107,10 @@ class FileLogger(Logger):
     def log(self, msg):
         with open(self.path, 'a') as log_file:
             log_file.write(msg + "\n")
+
+
+class Interface(Loggable):
+
+    def __init__(self, storage: Storage, logger: Logger):
+        super().__init__(logger)
+        self.storage = storage

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from Modules.storage import Storage
-from Modules.utils import Loggable, Logger, annotate
+from Modules.utils import Interface, Loggable, Logger, annotate
 
 
 @dataclass
@@ -24,10 +24,10 @@ class Thread:
     subreddit_img: str
 
 
-class RedditInterface(Loggable):
+class RedditInterface(Interface):
 
     def __init__(self, user: Union[User, dict], storage: Storage, logger: Logger):
-        super().__init__(logger)
+        super().__init__(storage, logger)
 
         if user is None:
             self.active = False
@@ -40,7 +40,6 @@ class RedditInterface(Loggable):
             self.active = False
 
         self.reddit = self.login_user(user)
-        self.storage = storage
 
     def login_user(self, user: Union[dict, User]) -> 'praw.Reddit':
         """
@@ -89,6 +88,7 @@ class RedditInterface(Loggable):
                     threads[index] = new_thread
                     index += 1
             return [dataclasses.asdict(x) for x in threads if x is not None]
+        return []
 
     def save_threads(self, threads) -> None:
         self.storage.save_reddit(threads)
