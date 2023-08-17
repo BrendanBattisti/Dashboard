@@ -27,7 +27,7 @@ reddit_interface = RedditInterface(
     config.reddit
 , storage, logger)
 shopping_interface = ShoppingInterface(config.node_port, logger)
-calendar_interface = CalendarInterface(config.calendar, storage, logger)
+calendar_interface = CalendarInterface( storage, logger)
 weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
 
 
@@ -63,7 +63,7 @@ def reddit():
 
 @app.route("/api/calendar")
 def calendar():
-    return 
+    return calendar_interface.fetch_calendar()
 
 @app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():
@@ -85,5 +85,5 @@ def life360():
 
 
 if __name__ == "__main__":
-    runListServer()
+    #runListServer()
     app.run(port=config.server_port)

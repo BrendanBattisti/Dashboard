@@ -19,19 +19,26 @@ class CalendarInterface(Interface):
         self.service = build('calendar', 'v3', credentials=self.credentials)
 
     def get_calendar_list(self):
-        calendars_result = self.service.calendarList.list().execute()
-        print(calendars_result)
-        return calendars_result
+        self.log("Getting user calendars")
+        calendars_result = self.service.calendarList().list().execute()
+        calendars = [{'id': x['id'], 'summary': x['summary']} for x in calendars_result['items']]
+        return calendars
+
+
 
     def fetch_calendar(self):
         self.log("Fetching events")
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        # events_result = self.service.events().list(calendarId='family14527635731341883679@group.calendar.google.com',
-        #                                           timeMin=now,
-        #                                           maxResults=10, singleEvents=True,
-        #                                           orderBy='startTime').execute()
-        # events = events_result.get('items', [])
+        
+        events = []
 
+        for calendar in self.get_calendar_list():
+            events_result = self.service.events().list(calendarId=calendar['id'],
+                                                    timeMin=now,
+                                                    maxResults=10, singleEvents=True,
+                                                    orderBy='startTime').execute()
+            events = events + events_result.get('items', [])
+        return events
         # with open("calendarstuff.json", 'w') as file:
         #    json.dump(calendars, file, indent=2)
         # print(calendars)
