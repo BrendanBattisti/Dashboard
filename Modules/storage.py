@@ -167,3 +167,40 @@ class GoogleCredentials(BaseModel):
     client_id: str = "" 
     client_secret: str = ""
     expiry: str = "" 
+
+"""
+Calendar
+"""
+
+class Event(BaseModel):
+
+    name: str = ""
+    organizer: str = ""
+    organizer_email: str = ""
+    link: str = ""
+    start: datetime.datetime = None
+    end: datetime.datetime = None
+
+    def __hash__(self) -> int:
+        return hash(self.name + self.start)
+    
+    def __lt__(self, other: 'Event'):
+        return datetime.datetime.strptime(self.start, "%Y-%m-%d") < datetime.datetime.strptime(other.start, "%Y-%m-%d") 
+
+    def from_google(self, event: dict):
+        if event is None:
+            return
+        if 'organizer' in event:
+            self.organizer = event['organizer']['displayName']
+            self.organizer_email = event['organizer']['email']
+
+        if 'start' in event:
+            self.start = event['start']['date']
+        if 'end' in event:
+            self.end = event['end']['date']
+
+
+        self.link = event['htmlLink']
+        self.name = event['summary']    
+
+

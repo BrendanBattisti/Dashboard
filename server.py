@@ -63,7 +63,7 @@ def reddit():
 
 @app.route("/api/calendar")
 def calendar():
-    return calendar_interface.fetch_calendar()
+    return calendar_interface.get_calendar_events()
 
 @app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():

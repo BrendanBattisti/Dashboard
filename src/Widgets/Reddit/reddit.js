@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./reddit.module.css";
-import { capitalize } from "@mui/material";
 import capitalizeFirstLetter from "../../Util/utils";
 
 // Module for showing trending reddit posts found on the popular page of reddit

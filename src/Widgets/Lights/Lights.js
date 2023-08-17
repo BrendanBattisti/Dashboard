@@ -54,7 +54,7 @@ export default function Lights() {
     return (
       <div
         key={index}
-        className={index % 2 == 0 ? styles.darkitem : styles.lightitem}
+        className={index % 2 === 0 ? styles.darkitem : styles.lightitem}
       >
         {capitalizeFirstLetter(data.name)}
         <Switch
@@ -108,5 +108,5 @@ export default function Lights() {
       </div>
     </div>
   );
-  return data.length != 0 ? content : null;
+  return data.length !== 0 ? content : null;
 }
