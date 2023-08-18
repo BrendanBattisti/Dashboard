@@ -8,17 +8,16 @@ from typing import Any, Tuple
 
 import requests
 
-from Modules.storage import Storage
-from Modules.utils import annotate, Loggable, Logger
+from Modules.storage import Storage, Interface
+from Modules.utils import  annotate, Logger
 
 ICON_MAP = {"Clouds": "cloud", "Rain": "rainy", "Clear": "sunny"}
 
 
-class WeatherInterface(Loggable):
+class WeatherInterface(Interface):
 
     def __init__(self, city: str, state: str, api_key: str, storage: Storage, logger: Logger):
-        super().__init__(logger)
-        self.storage = storage
+        super().__init__(storage, logger)
         self.api_key = api_key
         self.city = city
         self.state = state
@@ -84,7 +83,7 @@ class WeatherInterface(Loggable):
         # Aggregating the three hour chunks
         for index, day in enumerate(new_weather_data):
             dt = datetime.datetime.fromtimestamp(day['chunks'][0]['dt'])
-            day['weekday'] = dt.weekday()
+            day['weekday'] = dt.strftime("%a")
             day['day'] = dt.day
             day['month'] = dt.month
             day['index'] = index

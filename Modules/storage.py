@@ -6,7 +6,11 @@ data for the dashboard
 from abc import ABC, abstractmethod, ABCMeta
 import datetime
 import json
-from Modules.utils import Loggable
+from dataclasses import dataclass
+
+from pydantic import BaseModel
+
+from Modules.utils import Loggable, Logger
 
 
 class Storage(Loggable, metaclass=ABCMeta):
@@ -63,6 +67,18 @@ class Storage(Loggable, metaclass=ABCMeta):
     def save_lights(self, data):
         self._generic_save(data, 'lights')
 
+    def get_calendar(self):
+        return self._generic_get('calendar')
+
+    def save_calendar(self, data):
+        self._generic_save(data, 'calendar')
+
+    def get_google(self):
+        return self._generic_get('google')
+
+    def save_google(self, data):
+        return self._generic_save(data, 'google')
+
     @abstractmethod
     def save(self) -> None:
         self.log("Saving data")
@@ -94,3 +110,109 @@ class FileStorage(Storage, ABC):
                 self.data = json.load(file)
         except FileNotFoundError:
             self.data = {}
+
+
+class Interface(Loggable):
+
+    def __init__(self, storage: Storage, logger: Logger):
+        super().__init__(logger)
+        self.storage = storage
+
+
+"""
+Kasa Lights
+"""
+
+
+class Light(BaseModel):
+    ip: str
+    on: bool
+    name: str
+
+    def to_public(self):
+        return PublicLight(**{'on': self.on, 'name': self.name})
+
+
+class PublicLight(BaseModel):
+    on: bool
+    name: str
+
+    def __lt__(self, other: 'Light'):
+        return self.name < other.name
+
+
+"""
+Reddit
+"""
+
+
+class Thread(BaseModel):
+    title: str
+    upvotes: int
+    comments: int
+    link: str
+    subreddit_img: str
+
+
+"""
+Google
+"""
+
+
+class GoogleCredentials(BaseModel):
+    token: str = ""
+    refresh_token: str = ""
+    token_uri: str = ""
+    client_id: str = ""
+    client_secret: str = ""
+    expiry: str = ""
+
+
+"""
+Calendar
+"""
+
+
+class Calendar(BaseModel):
+    color: str = ""
+    name: str = ""
+    id: str = ""
+
+    def from_google(self, calendar: dict):
+        self.color = calendar['backgroundColor']
+        self.name = calendar['summary']
+        self.id = calendar['id']
+
+
+class Event(BaseModel):
+    name: str = ""
+    organizer: str = ""
+    organizer_email: str = ""
+    link: str = ""
+    start: str = ''
+    end: str = ''
+    color: str = ""
+
+    def __hash__(self) -> int:
+        return hash(self.name + self.start)
+
+    def __lt__(self, other: 'Event'):
+        return datetime.datetime.strptime(self.start, "%Y-%m-%d") < datetime.datetime.strptime(other.start, "%Y-%m-%d")
+
+    def from_calendar(self, calendar: Calendar):
+        self.color = calendar.color
+
+    def from_google(self, event: dict):
+        if event is None:
+            return
+        if 'organizer' in event:
+            self.organizer = event['organizer']['displayName']
+            self.organizer_email = event['organizer']['email']
+
+        if 'start' in event:
+            self.start = event['start']['date']
+        if 'end' in event:
+            self.end = event['end']['date']
+
+        self.link = event['htmlLink']
+        self.name = event['summary']

@@ -1,33 +1,15 @@
-import dataclasses
-from dataclasses import dataclass
+import json
 from typing import List, Union
 
-from Modules.storage import Storage
-from Modules.utils import Loggable, Logger, annotate
+from Modules.config import RedditUser
+from Modules.storage import Storage, Interface, Thread
+from Modules.utils import Logger, annotate
 
 
-@dataclass
-class User:
-    username: str
-    password: str
-    secret: str
-    client_id: str
-    user_agent: str
+class RedditInterface(Interface):
 
-
-@dataclass
-class Thread:
-    title: str
-    upvotes: int
-    comments: int
-    link: str
-    subreddit_img: str
-
-
-class RedditInterface(Loggable):
-
-    def __init__(self, user: Union[User, dict], storage: Storage, logger: Logger):
-        super().__init__(logger)
+    def __init__(self, user: Union[RedditUser, dict], storage: Storage, logger: Logger):
+        super().__init__(storage, logger)
 
         if user is None:
             self.active = False
@@ -40,9 +22,8 @@ class RedditInterface(Loggable):
             self.active = False
 
         self.reddit = self.login_user(user)
-        self.storage = storage
 
-    def login_user(self, user: Union[dict, User]) -> 'praw.Reddit':
+    def login_user(self, user: Union[dict, RedditUser]) -> 'praw.Reddit':
         """
         Logs in a user and returns a Reddit instance.
 
@@ -53,7 +34,7 @@ class RedditInterface(Loggable):
         - A Reddit instance that is logged in with the provided login credentials.
         """
         if type(user) == dict:
-            user = User(**user)
+            user = RedditUser(**user)
         if self.active:
             reddit = self.praw.Reddit(
                 client_id=user.client_id,
@@ -88,7 +69,8 @@ class RedditInterface(Loggable):
                                         subreddit_img=subreddit.icon_img)
                     threads[index] = new_thread
                     index += 1
-            return [dataclasses.asdict(x) for x in threads if x is not None]
+            return [json.loads(x.json()) for x in threads if x is not None]
+        return []
 
     def save_threads(self, threads) -> None:
         self.storage.save_reddit(threads)
@@ -107,4 +89,3 @@ class RedditInterface(Loggable):
 
             self.storage.save_reddit(data['data'])
         return data['data']['threads']
-

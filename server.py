@@ -5,13 +5,15 @@ import json
 import subprocess
 
 from flask import Flask, request
+from Modules.calendar import CalendarInterface
 
 from Modules.life360 import get_family_list
 from Modules.lights import KasaInterface
 from Modules.reddit import RedditInterface
 from Modules.shopping import ShoppingInterface
 from Modules.storage import FileStorage
-from Modules.utils import load_config, PrintLogger
+from Modules.utils import PrintLogger
+from Modules.config import load_config
 from Modules.weather import WeatherInterface
 
 app = Flask(__name__)
@@ -21,15 +23,11 @@ config = load_config("config.json")
 logger = PrintLogger()
 storage = FileStorage(config.storage_file, logger)
 kasa = KasaInterface(storage, logger)
-reddit_interface = RedditInterface({
-    "username": config.reddit_user,
-    "password": config.reddit_password,
-    "secret": config.reddit_secret,
-    "client_id": config.reddit_client_id,
-    "user_agent": config.reddit_user_agent
-}, storage, logger)
+reddit_interface = RedditInterface(
+    config.reddit
+    , storage, logger)
 shopping_interface = ShoppingInterface(config.node_port, logger)
-
+calendar_interface = CalendarInterface(storage, logger)
 weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
 
 
@@ -63,6 +61,11 @@ def reddit():
     return reddit_interface.get_threads()
 
 
+@app.route("/api/calendar")
+def calendar():
+    return calendar_interface.get_calendar_events()
+
+
 @app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():
     if request.method == "GET":
@@ -83,5 +86,5 @@ def life360():
 
 
 if __name__ == "__main__":
-    runListServer()
+    #runListServer()
     app.run(port=config.server_port)

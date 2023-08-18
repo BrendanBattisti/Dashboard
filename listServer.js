@@ -9,8 +9,8 @@ app.use(bodyParser.json());
 const config = JSON.parse(fs.readFileSync("config.json"));
 
 const any = new AnyList({
-  email: config.shopping_username,
-  password: config.shopping_password,
+  email: config.shopping.username,
+  password: config.shopping.password,
 });
 
 function getName(item) {
@@ -19,7 +19,7 @@ function getName(item) {
 
 async function updatedList() {
   await any.getLists();
-  return any.getListByName(config.shopping_list);
+  return any.getListByName(config.shopping.shopping_list);
 }
 
 async function getList() {

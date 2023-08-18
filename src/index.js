@@ -4,7 +4,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import Clock from "./Widgets/Clock/Clock";
 import Weather from "./Widgets/Weather/Weather";
-import Life360 from "./Widgets/Life360/Life360";
+import Calendar from "./Widgets/Calendar/Calendar";
 import Lights from "./Widgets/Lights/Lights";
 import Reddit from "./Widgets/Reddit/reddit";
 import ShoppingList from "./Widgets/ShoppingList/ShoppingList";
@@ -26,14 +26,13 @@ root.render(
         <></> <Weather />
       </div>
       <div className="vertical_flex">
-        <></>
+        <Calendar />
         <></>
         <ShoppingList />
       </div>
       <div className="vertical_flex">
         <Lights />
         <Reddit />
-        <Life360 />
       </div>
     </div>
   </React.StrictMode>
