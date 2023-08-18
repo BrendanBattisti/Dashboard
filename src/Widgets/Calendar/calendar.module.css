@@ -1,0 +1,8 @@
+.event {
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.event {
+  margin: 4%;
+  position: relative;
+}
