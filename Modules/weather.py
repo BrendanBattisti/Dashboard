@@ -83,7 +83,7 @@ class WeatherInterface(Interface):
         # Aggregating the three hour chunks
         for index, day in enumerate(new_weather_data):
             dt = datetime.datetime.fromtimestamp(day['chunks'][0]['dt'])
-            day['weekday'] = dt.weekday()
+            day['weekday'] = dt.strftime("%a")
             day['day'] = dt.day
             day['month'] = dt.month
             day['index'] = index

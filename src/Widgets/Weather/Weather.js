@@ -7,7 +7,6 @@ export default function Weather() {
   const [data, setData] = useState([]);
   const [active, setActive] = useState(0);
 
-  const weekdays = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
   useEffect(() => {
     const fetchData = async () => {
       await axios("api/weather")
@@ -53,7 +52,7 @@ export default function Weather() {
     return (
       <div key={weather.index}>
         <div className={styles.chunk} onClick={onClick}>
-          <div>{weekdays[weather.weekday]}</div>
+          <div>{weather.weekday}</div>
           <div className={styles.temp}>
             H: {Math.round(weather.high)}&deg; L: {Math.round(weather.low)}&deg;
           </div>

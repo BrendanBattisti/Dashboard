@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import capitalizeFirstLetter from "../../Util/utils";
-
+import styles from "./calendar.module.css";
 export default function Calendar() {
   const [data, setData] = useState([]);
 
@@ -25,8 +25,9 @@ export default function Calendar() {
     return (
       <div
         key={data.name}
+        className={styles.event}
         onClick={() => window.open(data.link, "_blank")}
-        style={{ color: data.color }}
+        style={{ color: data.color, cursor: "pointer" }}
       >
         {capitalizeFirstLetter(data.name)}
       </div>
