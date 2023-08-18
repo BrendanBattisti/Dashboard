@@ -7,6 +7,7 @@ import Weather from "./Widgets/Weather/Weather";
 import Calendar from "./Widgets/Calendar/Calendar";
 import Lights from "./Widgets/Lights/Lights";
 import Reddit from "./Widgets/Reddit/reddit";
+import Jarvis from "./Widgets/Jarvis/Jarvis";
 import ShoppingList from "./Widgets/ShoppingList/ShoppingList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -26,12 +27,12 @@ root.render(
         <></> <Weather />
       </div>
       <div className="vertical_flex">
-        <Calendar />
-        <></>
+        <Jarvis />
         <ShoppingList />
       </div>
       <div className="vertical_flex">
         <Lights />
+        <Calendar />
         <Reddit />
       </div>
     </div>
