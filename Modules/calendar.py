@@ -4,7 +4,7 @@ from typing import List
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
-from Modules.storage import Storage, Interface, Event
+from Modules.storage import Storage, Interface, Event, Calendar
 from Modules.utils import Logger
 
 
@@ -24,11 +24,14 @@ class CalendarInterface(Interface):
         else:
             self.active = False
 
-    def get_calendar_list(self):
+    def get_calendar_list(self) -> List[Calendar]:
         if self.active:
             self.log("Getting user calendars")
             calendars_result = self.service.calendarList().list().execute()
-            calendars = [{'id': x['id'], 'summary': x['summary']} for x in calendars_result['items']]
+            calendars = [Calendar() for x in calendars_result['items']]
+            for index, calendar in enumerate(calendars):
+                calendar.from_google(calendars_result['items'][index])
+
             return calendars
 
     def fetch_calendar(self):
@@ -39,19 +42,19 @@ class CalendarInterface(Interface):
             events = []
 
             for calendar in self.get_calendar_list():
-                events_result = self.service.events().list(calendarId=calendar['id'],
+                events_result = self.service.events().list(calendarId=calendar.id,
                                                            timeMin=now,
                                                            timeMax=endTime,
                                                            maxResults=10, singleEvents=True,
                                                            orderBy='startTime').execute()
-                events = events + events_result.get('items', [])
+                events_result = events_result.get('items', [])
+                new_events = [Event() for x in events_result]
+                for index, event in enumerate(new_events):
+                    event.from_google(events_result[index])
+                    event.from_calendar(calendar)
+                events = events + new_events
 
-            results = [Event() for x in events]
-
-            for index, event in enumerate(results):
-                event.from_google(events[index])
-
-            results = list(set(results))
+            results = list(set(events))
 
             results.sort()
 

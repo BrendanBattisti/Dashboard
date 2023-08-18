@@ -173,6 +173,19 @@ Calendar
 """
 
 
+class Calendar(BaseModel):
+    color: str = ""
+    name: str = ""
+    id: str = ""
+
+    def from_google(self, calendar: dict):
+        self.color = calendar['backgroundColor']
+        self.name = calendar['summary']
+        self.id = calendar['id']
+
+
+
+
 class Event(BaseModel):
     name: str = ""
     organizer: str = ""
@@ -180,12 +193,16 @@ class Event(BaseModel):
     link: str = ""
     start: str = ''
     end: str = ''
+    color: str = ""
 
     def __hash__(self) -> int:
         return hash(self.name + self.start)
 
     def __lt__(self, other: 'Event'):
         return datetime.datetime.strptime(self.start, "%Y-%m-%d") < datetime.datetime.strptime(other.start, "%Y-%m-%d")
+
+    def from_calendar(self, calendar: Calendar):
+        self.color = calendar.color
 
     def from_google(self, event: dict):
         if event is None:
