@@ -75,7 +75,7 @@ class Storage(Loggable, metaclass=ABCMeta):
 
     def get_google(self):
         return self._generic_get('google')
-    
+
     def save_google(self, data):
         return self._generic_save(data, 'google')
 
@@ -137,10 +137,8 @@ class PublicLight(BaseModel):
     on: bool
     name: str
 
-
     def __lt__(self, other: 'Light'):
         return self.name < other.name
-
 
 
 """
@@ -155,37 +153,39 @@ class Thread(BaseModel):
     link: str
     subreddit_img: str
 
+
 """
 Google
 """
 
-class GoogleCredentials(BaseModel):
 
-    token: str = "" 
+class GoogleCredentials(BaseModel):
+    token: str = ""
     refresh_token: str = ""
-    token_uri: str = "" 
-    client_id: str = "" 
+    token_uri: str = ""
+    client_id: str = ""
     client_secret: str = ""
-    expiry: str = "" 
+    expiry: str = ""
+
 
 """
 Calendar
 """
 
-class Event(BaseModel):
 
+class Event(BaseModel):
     name: str = ""
     organizer: str = ""
     organizer_email: str = ""
     link: str = ""
-    start: datetime.datetime = None
-    end: datetime.datetime = None
+    start: str = ''
+    end: str = ''
 
     def __hash__(self) -> int:
         return hash(self.name + self.start)
-    
+
     def __lt__(self, other: 'Event'):
-        return datetime.datetime.strptime(self.start, "%Y-%m-%d") < datetime.datetime.strptime(other.start, "%Y-%m-%d") 
+        return datetime.datetime.strptime(self.start, "%Y-%m-%d") < datetime.datetime.strptime(other.start, "%Y-%m-%d")
 
     def from_google(self, event: dict):
         if event is None:
@@ -199,8 +199,5 @@ class Event(BaseModel):
         if 'end' in event:
             self.end = event['end']['date']
 
-
         self.link = event['htmlLink']
-        self.name = event['summary']    
-
-
+        self.name = event['summary']

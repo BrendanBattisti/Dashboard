@@ -6,6 +6,8 @@ import re
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+
+
 class GoogleInterface(Interface):
 
     def __init__(self, config: CalendarConfig, storage: Storage, logger: Logger):
@@ -14,7 +16,7 @@ class GoogleInterface(Interface):
 
     def check_credentials(self):
         token = self.storage.get_google()
-        
+
         redirects = self.config.credentials.web.redirect_uris
         port = None
         for url in redirects:
@@ -23,7 +25,6 @@ class GoogleInterface(Interface):
                 port = int(local_host_url[0].split(":")[1])
 
         if not port:
-            
             print("No valid redirect")
             return
 
@@ -45,9 +46,9 @@ class GoogleInterface(Interface):
                     self.config.credentials.model_dump(), self.config.scopes)
                 creds = flow.run_local_server(port=port)
         self.storage.save_google(json.loads(creds.to_json()))
-            
-def main():
 
+
+def main():
     config = load_config("config.json")
 
     logger = PrintLogger()
@@ -56,5 +57,6 @@ def main():
     interface = GoogleInterface(config.calendar, storage, logger)
 
     interface.check_credentials()
+
 
 main()

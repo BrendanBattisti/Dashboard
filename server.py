@@ -25,9 +25,9 @@ storage = FileStorage(config.storage_file, logger)
 kasa = KasaInterface(storage, logger)
 reddit_interface = RedditInterface(
     config.reddit
-, storage, logger)
+    , storage, logger)
 shopping_interface = ShoppingInterface(config.node_port, logger)
-calendar_interface = CalendarInterface( storage, logger)
+calendar_interface = CalendarInterface(storage, logger)
 weather_interface = WeatherInterface("Rochester", "New York", config.weather_key, storage, logger)
 
 
@@ -65,6 +65,7 @@ def reddit():
 def calendar():
     return calendar_interface.get_calendar_events()
 
+
 @app.route('/api/lights', methods=['GET', 'PUT'])
 def lights():
     if request.method == "GET":
@@ -85,5 +86,5 @@ def life360():
 
 
 if __name__ == "__main__":
-    #runListServer()
+    # runListServer()
     app.run(port=config.server_port)
