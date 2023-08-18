@@ -8,6 +8,16 @@ from Modules.storage import Storage, Interface, Event, Calendar
 from Modules.utils import Logger
 
 
+def format_response_calendar(data) -> dict:
+    today = datetime.date.today()
+    one_week_later = today + datetime.timedelta(days=7)
+
+    today_events = [x for x in data if datetime.datetime.strptime(x['start'], "%Y-%m-%d").date() == today]
+    week_events = [x for x in data if datetime.datetime.strptime(x['start'], "%Y-%m-%d").date() <= one_week_later and x not in today_events]
+    month_events = [x for x in data if x not in today_events and x not in week_events]
+    return {1: (today_events, "Today"), 2: (week_events, "This Week"), 3: (month_events, "This Month"), }
+
+
 class CalendarInterface(Interface):
 
     def __init__(self, storage: Storage, logger: Logger):
@@ -63,13 +73,13 @@ class CalendarInterface(Interface):
             return results
         return []
 
-    def get_calendar_events(self) -> List[dict]:
+    def get_calendar_events(self) -> dict:
 
         data = self.storage.get_calendar()
 
         if data['refresh']:
             data = self.fetch_calendar()
             self.storage.save_calendar(data)
-            return data
+            return format_response_calendar(data)
 
-        return data['data']
+        return format_response_calendar(data['data'])

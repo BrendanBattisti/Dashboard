@@ -184,8 +184,6 @@ class Calendar(BaseModel):
         self.id = calendar['id']
 
 
-
-
 class Event(BaseModel):
     name: str = ""
     organizer: str = ""
