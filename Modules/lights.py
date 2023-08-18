@@ -49,6 +49,7 @@ class KasaInterface(Interface):
     def data_to_public_json(self) -> List[PublicLight]:
         data = [device.to_public() for device in self.data.values()]
         data.sort()
+        data = [x.model_dump() for x in data]
         return data
 
     def storage_format(self) -> dict:

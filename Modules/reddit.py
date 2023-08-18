@@ -3,8 +3,7 @@ from typing import List, Union
 
 from Modules.config import RedditUser
 from Modules.storage import Storage, Interface, Thread
-from Modules.utils import  Logger, annotate
-
+from Modules.utils import Logger, annotate
 
 
 class RedditInterface(Interface):
@@ -90,4 +89,3 @@ class RedditInterface(Interface):
 
             self.storage.save_reddit(data['data'])
         return data['data']['threads']
-
