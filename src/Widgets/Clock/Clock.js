@@ -17,7 +17,7 @@ export default function Clock() {
   }
 
   function hours() {
-    return time.getHours() >= 12 ? time.getHours() - 12 : time.getHours();
+    return time.getHours() > 13 ? time.getHours() - 12 : time.getHours();
   }
 
   function checkTime() {
