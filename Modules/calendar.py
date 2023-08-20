@@ -13,12 +13,13 @@ def format_response_calendar(data) -> dict:
     one_week_later = today + datetime.timedelta(days=7)
 
     today_events = [x for x in data if datetime.datetime.strptime(x['start'], "%Y-%m-%d").date() == today]
-    week_events = [x for x in data if datetime.datetime.strptime(x['start'], "%Y-%m-%d").date() <= one_week_later and x not in today_events]
+    week_events = [x for x in data if datetime.datetime.strptime(x['start'],
+                                                                 "%Y-%m-%d").date() <= one_week_later and x not in today_events]
     for event in week_events:
         event['name'] = f"{event['name']} - {datetime.datetime.strptime(event['start'], '%Y-%m-%d').strftime('%A')}"
     month_events = [x for x in data if x not in today_events and x not in week_events]
     for event in month_events:
-        event['name'] = f"{event['name']} - {datetime.datetime.strptime(event['start'], '%Y-%m-%d').strftime('%-d')}"
+        event['name'] = f"{event['name']} - {datetime.datetime.strptime(event['start'], '%Y-%m-%d').strftime('%d')}"
     return {1: (today_events, "Today"), 2: (week_events, "This Week"), 3: (month_events, "This Month"), }
 
 

@@ -86,5 +86,5 @@ def life360():
 
 
 if __name__ == "__main__":
-    #runListServer()
+    runListServer()
     app.run(port=config.server_port)
