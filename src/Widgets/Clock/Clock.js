@@ -17,7 +17,7 @@ export default function Clock() {
   }
 
   function hours() {
-    return time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
+    return time.getHours() >= 12 ? time.getHours() - 12 : time.getHours();
   }
 
   function checkTime() {
@@ -31,7 +31,7 @@ export default function Clock() {
         {ampm()}
       </div>
       <div className={styles.clock_text}>
-        {time.getDate()}/{time.getMonth()}/{time.getFullYear()}
+        {time.getMonth()}/{time.getDate()}/{time.getFullYear()}
       </div>
     </div>
   );
