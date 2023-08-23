@@ -8,6 +8,11 @@ export default function Calendar() {
 
   useEffect(() => {
     fetchData();
+
+    setInterval(() => {
+      fetchData();
+    }, 1000 * 60 * 60 * 6); // Refreshes the status
+    fetchData();
   }, []);
 
   const fetchData = async () => {

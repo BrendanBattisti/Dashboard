@@ -20,6 +20,9 @@ export default function ShoppingList() {
         console.log(error.response.status);
       });
   };
+  setInterval(() => {
+    fetchData();
+  }, 1000 * 60 * 60 * 6);
 
   const handleAddItem = async () => {
     if (newItem.trim() !== "") {

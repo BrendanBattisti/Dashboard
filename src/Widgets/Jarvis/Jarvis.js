@@ -29,7 +29,7 @@ export default function Jarvis() {
         style={{
           width: get_size(size),
           height: get_size(size),
-          animationIterationCount: active ? 0 : "infinite",
+          animationIterationCount: active ? "infinite" : 0,
           animationDuration: `${Math.max(Math.round(Math.random() * 20), 10)}s`,
           animationDirection: Math.random() > 0.5 ? "reverse" : "normal",
           borderWidth: `${Math.max(Math.random() * 10, 3)}px`,

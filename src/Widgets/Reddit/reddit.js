@@ -22,7 +22,7 @@ export default function Reddit() {
     };
     setInterval(() => {
       fetchData();
-    }, 1000 * 60 * 60 * 24); // Refreshes reddit threads
+    }, 1000 * 60 * 60 * 6); // Refreshes reddit threads
     fetchData();
   }, []);
 
