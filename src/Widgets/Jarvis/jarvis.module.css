@@ -1,6 +1,7 @@
 .jarvis {
-  background-color: rgba(0, 238, 255);
+  background-color: rgba(0, 238, 255, 0.8);
   border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 238, 255);
 }
 
 .edge {
@@ -11,6 +12,7 @@
   align-items: center;
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0.32, 0.01, 0.67, 0.99);
+  animation-name: standard_rotation;
 }
 @keyframes standard_rotation {
   from {

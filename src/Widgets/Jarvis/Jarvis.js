@@ -16,25 +16,23 @@ export default function Jarvis() {
     ></div>
   );
   const borderColor = () => {
-    return Math.round(Math.random() * 3) === 1 ? "rgba(0, 238, 255)" : null;
+    return Math.random() > 0.45 ? "rgba(0, 238, 255, .7)" : null;
   };
 
   function Edge(contents, size) {
     if (size === 0) {
       return contents;
     }
-    console.log(
-      `standard_rotation ${Math.round(Math.random() * 20)}s infinite reverse`
-    );
     return (
       <div
         className={styles.edge}
         style={{
           width: get_size(size),
           height: get_size(size),
-          animation: `standard_rotation ${Math.round(
-            Math.random() * 20
-          )}s infinite reverse`,
+          animationIterationCount: active ? 0 : "infinite",
+          animationDuration: `${Math.max(Math.round(Math.random() * 20), 10)}s`,
+          animationDirection: Math.random() > 0.5 ? "reverse" : "normal",
+          borderWidth: `${Math.max(Math.random() * 10, 3)}px`,
           borderTopColor: borderColor(),
           borderRightColor: borderColor(),
           borderBottomColor: borderColor(),
@@ -45,5 +43,5 @@ export default function Jarvis() {
       </div>
     );
   }
-  return Edge(center, 10);
+  return Edge(center, 14);
 }
