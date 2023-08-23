@@ -36,6 +36,10 @@ export default function Reddit() {
     }
   }
 
+  setInterval(() => {
+    switchThread(active + 1);
+  }, 1000 * 30);
+
   function Thread(thread, index) {
     return (
       <div className={index === active ? styles.container : styles.hidden}>
